@@ -1,11 +1,12 @@
 "use strict";
-
+//Neměnit rozměry textur! potřeba uupravit i v board template
 import { Tile } from "./js/tile.js";
+import { Board } from "./js/board.js";
 
 //Determine resolution of window
 const xRes = 800;
 const yRes = 600;
-
+//Settings of Phaser
 const Phaser = require("phaser");
 const config = {
   type: Phaser.AUTO,
@@ -21,36 +22,18 @@ const config = {
     create: create,
   },
 };
-
+//init of Phaser
 const game = new Phaser.Game(config);
+//init of my properties
+
+const board = new Board();
 
 function preload() {
-  // this.load.image("base_tile", require("./assets/basic_tile.png"));
-  const tile = new Tile(this);
-  tile.init();
+  this.load.image("base_tile", require("./assets/basic_tile.png"));
+  board.init(this);
 }
 
 function create() {
   game.scale.scaleMode = Phaser.Scale.FIT;
-  // game.stage.backgroundColor = "#cccccc";
-  // const shape = new Phaser.Geom.POLYGON();
-  const tile = this.add.sprite(xRes / 2, yRes / 2, "base_tile");
-  const tw = tile.width;
-  const th = tile.height;
-  console.log(tile);
-
-  tile.setInteractive(
-    new Phaser.Geom.Polygon([
-      [tw / 2, 0],
-      [tw, th / 4],
-      [tw, (3 * th) / 4],
-      [tw / 2, th],
-      [0, (3 * th) / 4],
-      [0, th / 4],
-    ]),
-    Phaser.Geom.Polygon.Contains
-  );
-  tile.on("pointerdown", function (pointer) {
-    console.log("shit");
-  });
+  board.render(xRes / 2, 100);
 }
