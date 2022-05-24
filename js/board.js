@@ -1,4 +1,5 @@
 import { Tile } from "./tile.js";
+import { NormalQuestion } from "./normalQuestion.js";
 export class Board {
   constructor(numOfRows = 7) {
     this.boardModel = prepareModelBoard(numOfRows);
