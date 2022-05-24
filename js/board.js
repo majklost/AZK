@@ -3,13 +3,16 @@ export class Board {
   constructor(numOfRows = 7) {
     this.boardModel = prepareModelBoard(numOfRows);
     this.ctx;
+    this.player = "B";
   }
+  //initialize each tile (set their sprites)
   init(ctx) {
     this.ctx = ctx;
     traverseModelBoard(this.boardModel, (tile) => {
-      tile.init(this.ctx);
+      tile.init(this.ctx, this.boardHandler);
     });
   }
+  //render whole board, when given where should first tile be positioned
   render(beginX, beginY) {
     const template = {
       width: 140,
@@ -22,6 +25,9 @@ export class Board {
       curX -= template.width / 4;
       curY += (template.height * 3) / 8;
     });
+  }
+  boardHandler() {
+    console.log("Board knows about click");
   }
 }
 
@@ -61,14 +67,3 @@ function renderRow(beginX, y, rowArray, template, rowIndex) {
     curX += template.width / 2;
   });
 }
-
-// function getNumberFromIndexes(row, column) {
-//   let number = 1;
-//   let curLimit = 1
-//   for(let i = 0; i< row; i++){
-//     for(let j = 0; j< curLimit; j++){
-
-//     }
-//     curLimit +=1;
-//   }
-// }

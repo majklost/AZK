@@ -6,11 +6,15 @@ export class Tile {
     this.spriteTile;
     this.number = number;
     this.pyramidCoords = { x: undefined, y: undefined };
+    this.numberHolder;
+    this.tileState = undefined;
   }
   //gives context of scene to Tile
-  init(ctx) {
+  init(ctx, boardHandler) {
     this.ctx = ctx;
+    this.boardHandler = boardHandler;
   }
+  //render Tile on exact position
   render(x, y, number) {
     this.x = x;
     this.y = y;
@@ -29,12 +33,14 @@ export class Tile {
       ]),
       Phaser.Geom.Polygon.Contains
     );
-    this.spriteTile.on("pointerdown", () => console.log(this));
+    this.spriteTile.on("pointerdown", () => {
+      this.clickHandler();
+    });
     this.spriteTile.setScale(0.5);
     this._renderNumber();
   }
   _renderNumber() {
-    this.ctx.add
+    this.numberHolder = this.ctx.add
       .text(this.x, this.y, `${this.number}`, {
         fontFamily: "Arial",
         fontSize: "24px",
@@ -42,5 +48,10 @@ export class Tile {
       })
       .setOrigin(0.5);
   }
-  giveCoords() {}
+  clickHandler() {
+    console.log(this);
+    this.spriteTile.setTexture("red_tile");
+    this.numberHolder.destroy();
+    this.boardHandler();
+  }
 }
