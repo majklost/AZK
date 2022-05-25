@@ -1,19 +1,22 @@
 import { Tile } from "./tile.js";
 import { NormalQuestion } from "./normalQuestion.js";
 import eventCenter from "./eventCenter.js";
+import { QuestionGenerator } from "./questionGenerator.js";
 
 export class Board {
   constructor(numOfRows = 7) {
     this.boardModel = prepareModelBoard(numOfRows);
     this.ctx;
     this.player = "B";
+    this.questionGenerator = new QuestionGenerator();
   }
-  //initialize each tile (set their sprites)
+  //initialize each tile (set their sprites), gets questions from API
   init(ctx) {
     this.ctx = ctx;
     traverseModelBoard(this.boardModel, (tile) => {
       tile.init(this.ctx, this.boardHandler);
     });
+    this.questionGenerator.getQuestions();
   }
 
   //render whole board, when given where should first tile be positioned

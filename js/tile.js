@@ -49,7 +49,7 @@ export class Tile {
       .setOrigin(0.5);
   }
   clickHandler() {
-    this.spriteTile.setTexture("red_tile");
+    this.spriteTile.setTexture("grey_tile");
     this.numberHolder.destroy();
     this.boardHandler(this.number);
   }

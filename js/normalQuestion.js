@@ -3,7 +3,7 @@ import eventCenter from "./eventCenter";
 export class NormalQuestion extends Phaser.Scene {
   constructor() {
     super("NormalQuestion");
-    eventCenter.on("newQuestion", this.test.bind(this));
+    eventCenter.on("newQuestion", this.loadDataFromBoard.bind(this));
   }
   create() {
     this.text = this.add.text(400, 300, "SHIT", {
@@ -23,7 +23,7 @@ export class NormalQuestion extends Phaser.Scene {
 
     // this.scene.switch("GameScene");
   }
-  test(data) {
+  loadDataFromBoard(data) {
     this.scene.restart();
     this.data.set("QuestionNumber", data);
   }
