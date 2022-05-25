@@ -1,5 +1,6 @@
 import { Tile } from "./tile.js";
 import { NormalQuestion } from "./normalQuestion.js";
+import eventCenter from "./eventCenter.js";
 
 export class Board {
   constructor(numOfRows = 7) {
@@ -30,8 +31,9 @@ export class Board {
     });
   }
   //When clicked on Tile, this function is called
-  boardHandler() {
-    this.ctx.scene.switch("NormalQuestion", { id: 1 });
+  boardHandler(number) {
+    this.ctx.scene.switch("NormalQuestion");
+    eventCenter.emit("newQuestion", number);
   }
 }
 

@@ -1,13 +1,10 @@
 import Phaser from "phaser";
+import eventCenter from "./eventCenter";
 export class NormalQuestion extends Phaser.Scene {
-  constructor(question, answer, player, ctx) {
+  constructor() {
     super("NormalQuestion");
-    this.question = question;
-    this.answer = answer;
-    this.player = player;
-    this.ctx = ctx;
+    eventCenter.on("newQuestion", this.test.bind(this));
   }
-  init() {}
   create() {
     this.text = this.add.text(400, 300, "SHIT", {
       fontFamily: "Arial",
@@ -16,14 +13,18 @@ export class NormalQuestion extends Phaser.Scene {
     });
     this.text.setDepth(2);
     this.text.setOrigin(0.5);
-    console.log(this.text);
     this.circle = this.add.circle(400, 300, 80, 0x6666ff);
     this.circle.setDepth(1);
     this.circle.setInteractive();
     this.circle.on("pointerdown", () => {
       this.scene.switch("GameScene");
     });
+    this.text.setText(this.data.get("QuestionNumber"));
 
     // this.scene.switch("GameScene");
+  }
+  test(data) {
+    this.scene.restart();
+    this.data.set("QuestionNumber", data);
   }
 }

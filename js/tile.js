@@ -49,9 +49,8 @@ export class Tile {
       .setOrigin(0.5);
   }
   clickHandler() {
-    console.log(this);
     this.spriteTile.setTexture("red_tile");
     this.numberHolder.destroy();
-    this.boardHandler();
+    this.boardHandler(this.number);
   }
 }
