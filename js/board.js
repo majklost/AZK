@@ -3,30 +3,37 @@ import { NormalQuestion } from "./normalQuestion.js";
 import eventCenter from "./eventCenter.js";
 import { QuestionGenerator } from "./questionGenerator.js";
 
+//Main class of game, takes care of loading questions, displaying tiles and checking winner
 export class Board {
   constructor(numOfRows = 7) {
+    //Triangle array of arrays - map of whole gameboard
     this.boardModel = prepareModelBoard(numOfRows);
     this.ctx;
+    //Current player, who starts
     this.player = "B";
+    //Object which gives questions to game
     this.questionGenerator = new QuestionGenerator();
   }
   //initialize each tile (set their sprites), gets questions from API
   init(ctx) {
+    //ctx - context of main gamescene
     this.ctx = ctx;
     traverseModelBoard(this.boardModel, (tile) => {
-      tile.init(this.ctx, this.boardHandler);
+      tile.init(this.ctx, this.boardHandler.bind(this));
     });
     this.questionGenerator.getQuestions();
   }
 
   //render whole board, when given where should first tile be positioned
   render(beginX, beginY) {
+    //Sets space between each hexagon
     const template = {
       width: 140,
       height: 160,
     };
     let curX = beginX;
     let curY = beginY;
+    //renders typical quiz board
     this.boardModel.forEach((rowArray, rowIndex) => {
       renderRow(curX, curY, rowArray, template, rowIndex);
       curX -= template.width / 4;
@@ -36,7 +43,13 @@ export class Board {
   //When clicked on Tile, this function is called
   boardHandler(number) {
     this.ctx.scene.switch("NormalQuestion");
-    eventCenter.emit("newQuestion", number);
+    //Creates event with data to send to QuestionScene
+
+    eventCenter.emit(
+      "newQuestion",
+      number,
+      this.questionGenerator.questions[number - 1]
+    );
   }
 }
 

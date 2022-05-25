@@ -1,7 +1,10 @@
 import Phaser from "phaser";
 import eventCenter from "./eventCenter";
+import { xRes, yRes } from "../myconfig";
+//Scene with question and controls for TV moderator
 export class NormalQuestion extends Phaser.Scene {
   constructor() {
+    //Sets the name of Scene
     super("NormalQuestion");
     eventCenter.on("newQuestion", this.loadDataFromBoard.bind(this));
   }
@@ -19,12 +22,11 @@ export class NormalQuestion extends Phaser.Scene {
     this.circle.on("pointerdown", () => {
       this.scene.switch("GameScene");
     });
-    this.text.setText(this.data.get("QuestionNumber"));
-
-    // this.scene.switch("GameScene");
+    this.text.setText(this.data.get("BoardData").question.question);
   }
-  loadDataFromBoard(data) {
+  loadDataFromBoard(number, question) {
     this.scene.restart();
-    this.data.set("QuestionNumber", data);
+    console.log(number, question);
+    this.data.set("BoardData", { number: number, question: question });
   }
 }

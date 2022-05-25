@@ -4,12 +4,21 @@ export class QuestionGenerator {
   constructor(mode = "Trivia") {
     this.api = API;
     this.mode = mode;
+    this.questions = [];
   }
   async getQuestions() {
     try {
       const response = await fetch(API);
-      const data = await response.json();
-      console.log(data);
+      const { results } = await response.json();
+
+      results.forEach((result) => {
+        const QASet = {
+          question: atob(result.question),
+          answer: atob(result.correct_answer),
+        };
+        this.questions.push(QASet);
+      });
+      //TODO: solve errors and display them to user
     } catch (err) {
       console.error(err);
     }
