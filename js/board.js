@@ -1,5 +1,6 @@
 import { Tile } from "./tile.js";
 import { NormalQuestion } from "./normalQuestion.js";
+
 export class Board {
   constructor(numOfRows = 7) {
     this.boardModel = prepareModelBoard(numOfRows);
@@ -13,6 +14,7 @@ export class Board {
       tile.init(this.ctx, this.boardHandler);
     });
   }
+
   //render whole board, when given where should first tile be positioned
   render(beginX, beginY) {
     const template = {
@@ -27,12 +29,13 @@ export class Board {
       curY += (template.height * 3) / 8;
     });
   }
+  //When clicked on Tile, this function is called
   boardHandler() {
-    console.log("Board knows about click");
+    this.ctx.scene.switch("NormalQuestion", { id: 1 });
   }
 }
 
-//creates triangular array filled up with Tile objects
+//Helper, creates triangular array filled up with Tile objects
 function prepareModelBoard(numOfRows) {
   let numOfColumns = 1;
   let displayedNumber = 1;

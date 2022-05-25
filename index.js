@@ -1,13 +1,13 @@
 "use strict";
 //Neměnit rozměry textur! potřeba uupravit i v board template
-import { Tile } from "./js/tile.js";
-import { Board } from "./js/board.js";
+import { xRes, yRes } from "./myconfig.js";
+import { NormalQuestion } from "./js/normalQuestion.js";
+import { GameScene } from "./js/gameScene.js";
 
 //Determine resolution of window
-const xRes = 800;
-const yRes = 600;
+
 //Settings of Phaser
-const Phaser = require("phaser");
+import Phaser from "phaser";
 const config = {
   type: Phaser.AUTO,
   width: xRes,
@@ -17,26 +17,9 @@ const config = {
     arcade: {},
   },
   backgroundColor: "#a6b0f5",
-  scene: {
-    preload: preload,
-    create: create,
-  },
+  scene: [GameScene, NormalQuestion],
 };
 //init of Phaser
 const game = new Phaser.Game(config);
+// game.scale.scaleMode = Phaser.Scale.FIT;
 //init of my properties
-
-const board = new Board();
-
-function preload() {
-  this.load.image("base_tile", require("./assets/basic_tile.png"));
-  this.load.image("red_tile", require("./assets/red_tile.png"));
-  this.load.image("blue_tile", require("./assets/blue_tile.png"));
-  this.load.image("grey_tile", require("./assets/grey_tile.png"));
-  board.init(this);
-}
-
-function create() {
-  game.scale.scaleMode = Phaser.Scale.FIT;
-  board.render(xRes / 2, 100);
-}
