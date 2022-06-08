@@ -20,10 +20,16 @@ export class NormalQuestion extends Phaser.Scene {
     this.updateArc();
   }
 
-  loadDataFromBoard(number, question) {
+  loadDataFromBoard(number, question, player, switchHandler) {
     this.scene.restart();
-    console.log(number, question);
-    this.data.set("BoardData", { number: number, question: question });
+    //method from board, switch the actual player who plays
+    this.switchHandler = switchHandler;
+    console.log(number, question, player);
+    this.data.set("BoardData", {
+      number: number,
+      question: question,
+      actualPlayer: player,
+    });
   }
   renderQuestionAndAnswer() {
     const style = {
@@ -74,6 +80,7 @@ export class NormalQuestion extends Phaser.Scene {
       0xb7e317
     );
   }
+
   timerRender() {
     this.timer = this.add.circle(xRes / 2 - 70, yRes / 4 - 30, 70, 0xff0000);
     this.timerText = this.add
@@ -113,7 +120,6 @@ export class NormalQuestion extends Phaser.Scene {
     this.graphics = this.add.graphics();
 
     this.timerAngle = { max: 360 };
-    console.log(this.tweens);
   }
   updateArc() {
     this.graphics.clear();
@@ -129,5 +135,72 @@ export class NormalQuestion extends Phaser.Scene {
     );
     this.graphics.strokePath();
   }
-  renderRightFalseButtons() {}
+  renderRightFalseButtons() {
+    this.right = this.add.sprite(xRes / 4, yRes / 2 + 200, "right_button");
+    this.false = this.add.sprite(
+      (xRes * 3) / 4,
+      yRes / 2 + 200,
+      "false_button"
+    );
+    this.right.scale = this.false.scale = 2 / 3;
+    this.right.setInteractive();
+    this.right.on("pointerdown", this.switchHandler);
+  }
+}
+
+class Timer {
+  timerRender() {
+    this.timer = this.add.circle(xRes / 2 - 70, yRes / 4 - 30, 70, 0xff0000);
+    this.timerText = this.add
+      .text(xRes / 2 - 70, yRes / 4 - 30, "Timer", {
+        fontFamily: "Arial",
+        fontSize: "24px",
+        color: "#000000",
+        align: "center",
+      })
+      .setOrigin(0.5);
+    this.timer.setInteractive();
+    const timerProperties = {
+      delay: 1000,
+      callback: this.updateTimer.bind(this),
+      repeat: 7,
+    };
+    this.timer.once("pointerdown", () => {
+      this.timerText.setText(7);
+      this.elapsedTime = 1;
+      this.clockTimer = this.time.addEvent(timerProperties);
+      this.tweens.add({
+        targets: this.timerAngle,
+        duration: 7000,
+        max: 0,
+      });
+    });
+  }
+  updateTimer() {
+    this.elapsedTime++;
+    if (this.elapsedTime < 8) {
+      this.timerText.setText(8 - this.elapsedTime);
+    } else {
+      this.timerText.setText("END");
+    }
+  }
+  createArc() {
+    this.graphics = this.add.graphics();
+
+    this.timerAngle = { max: 360 };
+  }
+  updateArc() {
+    this.graphics.clear();
+    this.graphics.lineStyle(15, 0xff00ff);
+    this.graphics.beginPath();
+    this.graphics.arc(
+      xRes / 2 - 70,
+      yRes / 4 - 30,
+      50,
+      Phaser.Math.DegToRad(0),
+      Phaser.Math.DegToRad(this.timerAngle.max),
+      false
+    );
+    this.graphics.strokePath();
+  }
 }

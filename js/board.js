@@ -46,8 +46,21 @@ export class Board {
 
     if (actualQuestion) {
       this.ctx.scene.switch("NormalQuestion");
-      eventCenter.emit("newQuestion", number, actualQuestion);
+      eventCenter.emit(
+        "newQuestion",
+        number,
+        actualQuestion,
+        this.player,
+        this.switchPlayer.bind(this)
+      );
     }
+  }
+  switchPlayer() {
+    console.log(this);
+
+    if (this.player == "B") this.player = "O";
+    else if (this.player == "O") this.player = "B";
+    console.log("Player switched to " + this.player);
   }
 }
 

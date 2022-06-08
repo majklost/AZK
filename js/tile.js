@@ -53,4 +53,9 @@ export class Tile {
     this.numberHolder.destroy();
     this.boardHandler(this.number);
   }
+  setColor(color) {
+    if (color == "B") this.spriteTile.setTexture("blue_tile");
+    else if (color == "O") this.spriteTile.setTexture("orange_tile");
+    else if (color == "G") this.spriteTile.setTexture("grey_tile");
+  }
 }
