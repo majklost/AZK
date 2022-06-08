@@ -1,5 +1,4 @@
 import { Tile } from "./tile.js";
-import { NormalQuestion } from "./normalQuestion.js";
 import eventCenter from "./eventCenter.js";
 import { QuestionGenerator } from "./questionGenerator.js";
 
