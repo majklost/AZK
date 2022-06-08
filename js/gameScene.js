@@ -12,6 +12,8 @@ export class GameScene extends Phaser.Scene {
     this.load.image("red_tile", require("../assets/red_tile.png"));
     this.load.image("blue_tile", require("../assets/blue_tile.png"));
     this.load.image("grey_tile", require("../assets/grey_tile.png"));
+    this.load.image("switchToBlue", require("../assets/switchToBlue.png"));
+    this.load.image("switchToOrange", require("../assets/switchToOrange.png"));
     this.board.init(this);
   }
   create() {

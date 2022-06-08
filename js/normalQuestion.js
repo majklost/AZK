@@ -1,23 +1,25 @@
 import Phaser from "phaser";
 import eventCenter from "./eventCenter";
 import { xRes, yRes } from "../myconfig";
+import { Timer } from "./timer";
 //Scene with question and controls for TV moderator
 export class NormalQuestion extends Phaser.Scene {
   constructor() {
     //Sets the name of Scene
     super("NormalQuestion");
     eventCenter.on("newQuestion", this.loadDataFromBoard.bind(this));
-    this.elapsedTime = 1;
+    this.timer = new Timer(this, xRes / 2 - 70, yRes / 4 - 30, 7000);
   }
 
   create() {
     this.renderQuestionAndAnswer();
-    this.timerRender();
-    this.createArc();
+    this.timer.timerRender();
+    this.timer.createArc();
     this.renderRightFalseButtons();
+    this.renderSwitchButton();
   }
   update() {
-    this.updateArc();
+    this.timer.updateArc();
   }
 
   loadDataFromBoard(number, question, player, switchHandler) {
@@ -80,61 +82,6 @@ export class NormalQuestion extends Phaser.Scene {
       0xb7e317
     );
   }
-
-  timerRender() {
-    this.timer = this.add.circle(xRes / 2 - 70, yRes / 4 - 30, 70, 0xff0000);
-    this.timerText = this.add
-      .text(xRes / 2 - 70, yRes / 4 - 30, "Timer", {
-        fontFamily: "Arial",
-        fontSize: "24px",
-        color: "#000000",
-        align: "center",
-      })
-      .setOrigin(0.5);
-    this.timer.setInteractive();
-    const timerProperties = {
-      delay: 1000,
-      callback: this.updateTimer.bind(this),
-      repeat: 7,
-    };
-    this.timer.once("pointerdown", () => {
-      this.timerText.setText(7);
-      this.elapsedTime = 1;
-      this.clockTimer = this.time.addEvent(timerProperties);
-      this.tweens.add({
-        targets: this.timerAngle,
-        duration: 7000,
-        max: 0,
-      });
-    });
-  }
-  updateTimer() {
-    this.elapsedTime++;
-    if (this.elapsedTime < 8) {
-      this.timerText.setText(8 - this.elapsedTime);
-    } else {
-      this.timerText.setText("END");
-    }
-  }
-  createArc() {
-    this.graphics = this.add.graphics();
-
-    this.timerAngle = { max: 360 };
-  }
-  updateArc() {
-    this.graphics.clear();
-    this.graphics.lineStyle(15, 0xff00ff);
-    this.graphics.beginPath();
-    this.graphics.arc(
-      xRes / 2 - 70,
-      yRes / 4 - 30,
-      50,
-      Phaser.Math.DegToRad(0),
-      Phaser.Math.DegToRad(this.timerAngle.max),
-      false
-    );
-    this.graphics.strokePath();
-  }
   renderRightFalseButtons() {
     this.right = this.add.sprite(xRes / 4, yRes / 2 + 200, "right_button");
     this.false = this.add.sprite(
@@ -146,61 +93,9 @@ export class NormalQuestion extends Phaser.Scene {
     this.right.setInteractive();
     this.right.on("pointerdown", this.switchHandler);
   }
-}
+  renderSwitchButton() {
+    console.log(this.data.get("BoardData"));
 
-class Timer {
-  timerRender() {
-    this.timer = this.add.circle(xRes / 2 - 70, yRes / 4 - 30, 70, 0xff0000);
-    this.timerText = this.add
-      .text(xRes / 2 - 70, yRes / 4 - 30, "Timer", {
-        fontFamily: "Arial",
-        fontSize: "24px",
-        color: "#000000",
-        align: "center",
-      })
-      .setOrigin(0.5);
-    this.timer.setInteractive();
-    const timerProperties = {
-      delay: 1000,
-      callback: this.updateTimer.bind(this),
-      repeat: 7,
-    };
-    this.timer.once("pointerdown", () => {
-      this.timerText.setText(7);
-      this.elapsedTime = 1;
-      this.clockTimer = this.time.addEvent(timerProperties);
-      this.tweens.add({
-        targets: this.timerAngle,
-        duration: 7000,
-        max: 0,
-      });
-    });
-  }
-  updateTimer() {
-    this.elapsedTime++;
-    if (this.elapsedTime < 8) {
-      this.timerText.setText(8 - this.elapsedTime);
-    } else {
-      this.timerText.setText("END");
-    }
-  }
-  createArc() {
-    this.graphics = this.add.graphics();
-
-    this.timerAngle = { max: 360 };
-  }
-  updateArc() {
-    this.graphics.clear();
-    this.graphics.lineStyle(15, 0xff00ff);
-    this.graphics.beginPath();
-    this.graphics.arc(
-      xRes / 2 - 70,
-      yRes / 4 - 30,
-      50,
-      Phaser.Math.DegToRad(0),
-      Phaser.Math.DegToRad(this.timerAngle.max),
-      false
-    );
-    this.graphics.strokePath();
+    // if (this.data.get("BoardData").ac)
   }
 }
