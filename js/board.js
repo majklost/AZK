@@ -42,14 +42,13 @@ export class Board {
   }
   //When clicked on Tile, this function is called
   boardHandler(number) {
-    this.ctx.scene.switch("NormalQuestion");
     //Creates event with data to send to QuestionScene
+    const actualQuestion = this.questionGenerator.questions[number - 1];
 
-    eventCenter.emit(
-      "newQuestion",
-      number,
-      this.questionGenerator.questions[number - 1]
-    );
+    if (actualQuestion) {
+      this.ctx.scene.switch("NormalQuestion");
+      eventCenter.emit("newQuestion", number, actualQuestion);
+    }
   }
 }
 
