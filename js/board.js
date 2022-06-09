@@ -5,6 +5,7 @@ import { QuestionGenerator } from "./questionGenerator.js";
 //Main class of game, takes care of loading questions, displaying tiles and checking winner
 export class Board {
   constructor(numOfRows = 7) {
+    this.chosenTile;
     //Triangle array of arrays - map of whole gameboard
     this.boardModel = prepareModelBoard(numOfRows);
     this.ctx;
@@ -40,27 +41,34 @@ export class Board {
     });
   }
   //When clicked on Tile, this function is called
-  boardHandler(number) {
+  boardHandler(tile) {
+    this.chosenTile = tile;
+
     //Creates event with data to send to QuestionScene
-    const actualQuestion = this.questionGenerator.questions[number - 1];
+    const actualQuestion = this.questionGenerator.questions[tile.number - 1];
 
     if (actualQuestion) {
       this.ctx.scene.switch("NormalQuestion");
       eventCenter.emit(
         "newQuestion",
-        number,
+        tile.number,
         actualQuestion,
         this.player,
-        this.switchPlayer.bind(this)
+        this.switchPlayer.bind(this),
+        this.questionAnsweredRight.bind(this)
       );
     }
   }
   switchPlayer() {
-    console.log(this);
-
     if (this.player == "B") this.player = "O";
     else if (this.player == "O") this.player = "B";
     console.log("Player switched to " + this.player);
+
+    eventCenter.emit("playerSwitch", this.player);
+  }
+  questionAnsweredRight(bool) {
+    if (bool) this.chosenTile.setState(this.player);
+    this.switchPlayer();
   }
 }
 

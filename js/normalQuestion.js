@@ -8,7 +8,10 @@ export class NormalQuestion extends Phaser.Scene {
     //Sets the name of Scene
     super("NormalQuestion");
     eventCenter.on("newQuestion", this.loadDataFromBoard.bind(this));
+    eventCenter.on("playerSwitch", this.switchPlayerAndRerender.bind(this));
     this.timer = new Timer(this, xRes / 2 - 70, yRes / 4 - 30, 7000);
+    //Is provided by eventEmitter
+    this.switchHandler;
   }
 
   create() {
@@ -22,7 +25,7 @@ export class NormalQuestion extends Phaser.Scene {
     this.timer.updateArc();
   }
 
-  loadDataFromBoard(number, question, player, switchHandler) {
+  loadDataFromBoard(number, question, player, switchHandler, answerHandler) {
     this.scene.restart();
     //method from board, switch the actual player who plays
     this.switchHandler = switchHandler;
@@ -32,6 +35,7 @@ export class NormalQuestion extends Phaser.Scene {
       question: question,
       actualPlayer: player,
     });
+    this.answerHandler = answerHandler;
   }
   renderQuestionAndAnswer() {
     const style = {
@@ -47,7 +51,7 @@ export class NormalQuestion extends Phaser.Scene {
         width: 400,
       },
     });
-
+    const actualPlayer = this.data.get("BoardData").actualPlayer;
     this.questionText.setDepth(2);
     this.questionText.setOrigin(0.5);
     this.questionLabel = this.add.rexRoundRectangle(
@@ -56,8 +60,9 @@ export class NormalQuestion extends Phaser.Scene {
       400,
       200,
       20,
-      0x6666ff
+      actualPlayer == "B" ? 0x19b5fe : 0xffa500
     );
+    this.questionLabel.setStrokeStyle(10, 0xffffff, 1);
 
     this.questionLabel.setInteractive();
     this.questionLabel.on("pointerdown", () => {
@@ -91,11 +96,40 @@ export class NormalQuestion extends Phaser.Scene {
     );
     this.right.scale = this.false.scale = 2 / 3;
     this.right.setInteractive();
-    this.right.on("pointerdown", this.switchHandler);
+    this.false.setInteractive();
+    this.right.on("pointerdown", () => {
+      this.answerHandler(true);
+      this.scene.switch("GameScene");
+    });
+    this.false.on("pointerdown", () => {
+      this.answerHandler(false);
+      this.scene.switch("GameScene");
+    });
   }
   renderSwitchButton() {
-    console.log(this.data.get("BoardData"));
+    //Helper function, used in if statements below
+    function renderSwitch(texture) {
+      const sprite = this.add.sprite(xRes / 2 + 70, yRes / 4 - 30, texture);
+      sprite.scale = 2 / 3;
+      return sprite;
+    }
+    const actualPlayer = this.data.get("BoardData").actualPlayer;
+    if (actualPlayer == "B")
+      this.switch = renderSwitch.call(this, "switchToOrange");
+    if (actualPlayer == "O")
+      this.switch = renderSwitch.call(this, "switchToBlue");
+    this.switch.setInteractive();
+    this.switch.on("pointerdown", this.switchHandler);
+  }
+  //this function rerender button when player switched
+  switchPlayerAndRerender(newPlayer) {
+    this.data.get("BoardData").actualPlayer = newPlayer;
 
-    // if (this.data.get("BoardData").ac)
+    this.questionLabel.fillColor = newPlayer == "B" ? 0x19b5fe : 0xffa500;
+    // this.switch.setTexture(
+    //   newPlayer == "B" ? "switchToOrange" : "switchToBlue"
+    // );
+    this.switch.visible = false;
+    this.timer.hide();
   }
 }

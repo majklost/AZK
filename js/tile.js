@@ -51,11 +51,18 @@ export class Tile {
   clickHandler() {
     this.spriteTile.setTexture("grey_tile");
     this.numberHolder.destroy();
-    this.boardHandler(this.number);
+    this.boardHandler(this);
   }
-  setColor(color) {
-    if (color == "B") this.spriteTile.setTexture("blue_tile");
-    else if (color == "O") this.spriteTile.setTexture("orange_tile");
-    else if (color == "G") this.spriteTile.setTexture("grey_tile");
+  setColor() {
+    if (this.tileState == "B") this.spriteTile.setTexture("blue_tile");
+    else if (this.tileState == "O") this.spriteTile.setTexture("red_tile");
+    else if (!this.tileState) this.spriteTile.setTexture("grey_tile");
+  }
+  setState(state) {
+    this.tileState = state;
+
+    this.spriteTile.removeListener("pointerdown");
+
+    this.setColor();
   }
 }
