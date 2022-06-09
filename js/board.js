@@ -22,6 +22,7 @@ export class Board {
       tile.init(this.ctx, this.boardHandler.bind(this));
     });
     this.questionGenerator.getQuestions();
+    this.questionGenerator.getTFQuestions();
   }
 
   //render whole board, when given where should first tile be positioned
@@ -45,7 +46,9 @@ export class Board {
     this.chosenTile = tile;
 
     //Creates event with data to send to QuestionScene
-    const actualQuestion = this.questionGenerator.questions[tile.number - 1];
+    const actualQuestion = !this.chosenTile.tileState
+      ? this.questionGenerator.questions[tile.number - 1]
+      : this.questionGenerator.TFQuestions[tile.number - 1];
 
     if (actualQuestion) {
       this.ctx.scene.switch("NormalQuestion");
@@ -55,7 +58,8 @@ export class Board {
         actualQuestion,
         this.player,
         this.switchPlayer.bind(this),
-        this.questionAnsweredRight.bind(this)
+        this.questionAnsweredRight.bind(this),
+        this.chosenTile.tileState ? true : false
       );
     }
   }
@@ -66,8 +70,13 @@ export class Board {
 
     eventCenter.emit("playerSwitch", this.player);
   }
-  questionAnsweredRight(bool) {
+  questionAnsweredRight(bool, TF = false) {
     if (bool) this.chosenTile.setState(this.player);
+    else if (!TF) this.chosenTile.setState("G");
+    else {
+      this.switchPlayer();
+      this.chosenTile.setState(this.player);
+    }
     this.switchPlayer();
   }
 }

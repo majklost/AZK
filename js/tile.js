@@ -49,19 +49,22 @@ export class Tile {
       .setOrigin(0.5);
   }
   clickHandler() {
-    this.spriteTile.setTexture("grey_tile");
-    this.numberHolder.destroy();
     this.boardHandler(this);
   }
   setColor() {
-    if (this.tileState == "B") this.spriteTile.setTexture("blue_tile");
-    else if (this.tileState == "O") this.spriteTile.setTexture("red_tile");
-    else if (!this.tileState) this.spriteTile.setTexture("grey_tile");
+    if (this.tileState == "B") {
+      this.numberHolder.destroy();
+      this.spriteTile.setTexture("blue_tile");
+    } else if (this.tileState == "O") {
+      this.numberHolder.destroy();
+      this.spriteTile.setTexture("red_tile");
+    } else if (this.tileState == "G") this.spriteTile.setTexture("grey_tile");
   }
   setState(state) {
     this.tileState = state;
 
-    this.spriteTile.removeListener("pointerdown");
+    if (this.tileState == "B" || this.tileState == "O")
+      this.spriteTile.removeListener("pointerdown");
 
     this.setColor();
   }

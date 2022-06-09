@@ -25,15 +25,22 @@ export class NormalQuestion extends Phaser.Scene {
     this.timer.updateArc();
   }
 
-  loadDataFromBoard(number, question, player, switchHandler, answerHandler) {
+  loadDataFromBoard(
+    number,
+    question,
+    player,
+    switchHandler,
+    answerHandler,
+    isTF
+  ) {
     this.scene.restart();
     //method from board, switch the actual player who plays
     this.switchHandler = switchHandler;
-    console.log(number, question, player);
     this.data.set("BoardData", {
       number: number,
       question: question,
       actualPlayer: player,
+      isTF: isTF,
     });
     this.answerHandler = answerHandler;
   }
@@ -63,11 +70,6 @@ export class NormalQuestion extends Phaser.Scene {
       actualPlayer == "B" ? 0x19b5fe : 0xffa500
     );
     this.questionLabel.setStrokeStyle(10, 0xffffff, 1);
-
-    this.questionLabel.setInteractive();
-    this.questionLabel.on("pointerdown", () => {
-      this.scene.switch("GameScene");
-    });
     const answerString = this.data.get("BoardData").question.answer;
     this.answerText = this.add.text(xRes / 2, yRes / 2 + 160, answerString, {
       ...style,
@@ -94,15 +96,16 @@ export class NormalQuestion extends Phaser.Scene {
       yRes / 2 + 200,
       "false_button"
     );
+    const isTF = this.data.get("BoardData").isTF;
     this.right.scale = this.false.scale = 2 / 3;
     this.right.setInteractive();
     this.false.setInteractive();
     this.right.on("pointerdown", () => {
-      this.answerHandler(true);
+      this.answerHandler(true, isTF);
       this.scene.switch("GameScene");
     });
     this.false.on("pointerdown", () => {
-      this.answerHandler(false);
+      this.answerHandler(false, isTF);
       this.scene.switch("GameScene");
     });
   }

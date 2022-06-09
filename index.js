@@ -28,7 +28,7 @@ const config = {
       // ...
     ],
   },
-  backgroundColor: "#a6b0f5",
+  backgroundColor: "#23a4c4",
   scene: [GameScene, NormalQuestion],
 };
 //init of Phaser

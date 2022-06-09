@@ -5,6 +5,7 @@ export class QuestionGenerator {
     this.api = API;
     this.mode = mode;
     this.questions = [];
+    this.TFQuestions = [];
   }
   async getQuestions() {
     try {
@@ -21,6 +22,15 @@ export class QuestionGenerator {
       //TODO: solve errors and display them to user
     } catch (err) {
       console.error(err);
+    }
+  }
+  async getTFQuestions() {
+    for (let i = 0; i < 28; i++) {
+      const TFQuestion = {
+        question: `Je toto vzorová true false otázka s číslem ${i + 1}?`,
+        answer: "ANO",
+      };
+      this.TFQuestions.push(TFQuestion);
     }
   }
 }
