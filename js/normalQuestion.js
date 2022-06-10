@@ -9,7 +9,7 @@ export class NormalQuestion extends Phaser.Scene {
     super("NormalQuestion");
     eventCenter.on("newQuestion", this.loadDataFromBoard.bind(this));
     eventCenter.on("playerSwitch", this.switchPlayerAndRerender.bind(this));
-    this.timer = new Timer(this, xRes / 2 - 70, yRes / 4 - 30, 7000);
+    this.timer = new Timer(this, xRes / 2, yRes / 4 - 30, 7000);
     //Is provided by eventEmitter
     this.switchHandler;
   }
@@ -31,7 +31,7 @@ export class NormalQuestion extends Phaser.Scene {
     player,
     switchHandler,
     answerHandler,
-    isTF
+    isTF // defines if the question will be true/false or with answer
   ) {
     this.scene.restart();
     //method from board, switch the actual player who plays
@@ -112,8 +112,9 @@ export class NormalQuestion extends Phaser.Scene {
   renderSwitchButton() {
     //Helper function, used in if statements below
     function renderSwitch(texture) {
-      const sprite = this.add.sprite(xRes / 2 + 70, yRes / 4 - 30, texture);
+      const sprite = this.add.sprite(xRes / 2, yRes / 4 - 30, texture);
       sprite.scale = 2 / 3;
+      sprite.setDepth(-1);
       return sprite;
     }
     const actualPlayer = this.data.get("BoardData").actualPlayer;

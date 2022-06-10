@@ -8,12 +8,7 @@ export class Timer {
     this.elapsedTime = 1;
   }
   timerRender() {
-    this.timer = this.ctx.add.circle(
-      xRes / 2 - 70,
-      yRes / 4 - 30,
-      70,
-      0xff0000
-    );
+    this.timer = this.ctx.add.circle(this.x, this.y, 70, 0xff0000);
     this.timerText = this.ctx.add
       .text(this.x, this.y, "Timer", {
         fontFamily: "Arial",
@@ -36,6 +31,12 @@ export class Timer {
         targets: this.timerAngle,
         duration: this.duration,
         max: 0,
+      });
+      this.ctx.tweens.add({
+        targets: [this.timerAngle, this.timerText, this.timer],
+        alpha: 0,
+        duration: 500,
+        delay: this.duration,
       });
     });
   }

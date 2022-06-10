@@ -18,6 +18,11 @@ const config = {
     default: "arcade",
     arcade: {},
   },
+  scale: {
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    resolution: window.devicePixelRatio,
+  },
+  resolution: window.devicePixelRatio,
   plugins: {
     global: [
       {
