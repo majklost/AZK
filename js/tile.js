@@ -8,7 +8,7 @@ export class Tile {
     this.pyramidCoords = { x: undefined, y: undefined };
     this.numberHolder;
     this.tileState = undefined;
-    this.border = undefined;
+    this.border = { left: false, right: false, bottom: false };
   }
   //gives context of scene to Tile
   init(ctx, boardHandler) {
@@ -70,6 +70,6 @@ export class Tile {
     this.setColor();
   }
   setBorder(borderType) {
-    this.border = borderType;
+    this.border[borderType] = true;
   }
 }

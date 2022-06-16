@@ -18,6 +18,5 @@ export class GameScene extends Phaser.Scene {
   }
   create() {
     this.board.render(xRes / 2, 100);
-    console.log(this.game.scale);
   }
 }

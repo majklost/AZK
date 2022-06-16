@@ -23,6 +23,7 @@ export class Board {
     });
     this.questionGenerator.getQuestions();
     this.questionGenerator.getTFQuestions();
+    traverseModelBoard(this.boardModel, this.setBorder);
   }
 
   //render whole board, when given where should first tile be positioned
@@ -83,8 +84,61 @@ export class Board {
     this.switchPlayer();
   }
   checkWin() {
-    console.log(this.chosenTile);
-    console.log(this.boardModel);
+    const connectedToSide = {
+      right: false,
+      left: false,
+      bottom: false,
+    };
+    const connectedNeighbours = [];
+    const relativeIndexes = [
+      [-1, -1],
+      [0, -1],
+      [-1, 0],
+      [1, 0],
+      [0, 1],
+      [1, 1],
+    ];
+    // console.log(this.chosenTile);
+    // console.log(this.boardModel);
+    function checkNeighbours(tile) {
+      relativeIndexes.forEach((relXY) => {
+        const x = tile.pyramidCoords.x + relXY[0];
+        const y = tile.pyramidCoords.y + relXY[1];
+        if (!this.boardModel[y] || !this.boardModel[y][x]) return;
+        const neighbour = this.boardModel[y][x];
+        if (
+          neighbour.tileState == this.player &&
+          !connectedNeighbours.includes(neighbour)
+        ) {
+          connectedNeighbours.push(neighbour);
+          resolve.call(this);
+          checkNeighbours.call(this, neighbour);
+        }
+      });
+    }
+    checkNeighbours.call(this, this.chosenTile);
+    console.log(connectedNeighbours);
+    function resolve() {
+      connectedNeighbours.forEach((neighbour) => {
+        if (neighbour.border.left) connectedToSide.left = true;
+        if (neighbour.border.right) connectedToSide.right = true;
+        if (neighbour.border.bottom) connectedToSide.bottom = true;
+      });
+      if (
+        connectedToSide.left &&
+        connectedToSide.right &&
+        connectedToSide.bottom
+      ) {
+        console.log(this.player, " WINS!");
+      }
+    }
+  }
+
+  //Sets border attribute for tiles, according to the position (e.g. tiles on the right edge - right = true), necessary for wincheck algorithm
+  setBorder(tile, rowIndex, columnIndex, numOfRows) {
+    if (columnIndex == 0) tile.setBorder("left");
+    if (columnIndex == rowIndex) tile.setBorder("right");
+    if (rowIndex == numOfRows - 1) tile.setBorder("bottom");
   }
 }
 
@@ -110,7 +164,7 @@ function traverseModelBoard(boardModel, callback, numOfRows = 7) {
   let numOfColumns = 1;
   for (let rowIndex = 0; rowIndex < numOfRows; rowIndex++) {
     for (let i = 0; i < numOfColumns; i++) {
-      callback(boardModel[rowIndex][i], rowIndex, i);
+      callback(boardModel[rowIndex][i], rowIndex, i, numOfRows);
     }
     numOfColumns += 1;
   }
@@ -120,7 +174,7 @@ function renderRow(beginX, y, rowArray, template, rowIndex) {
   let curX = beginX;
   rowArray.forEach((tile, columnIndex) => {
     tile.render(curX, y, 1);
-    tile.pyramidCoords = { x: rowIndex, y: columnIndex };
+    tile.pyramidCoords = { x: columnIndex, y: rowIndex };
     curX += template.width / 2;
   });
 }
