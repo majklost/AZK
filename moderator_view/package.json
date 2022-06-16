@@ -19,9 +19,11 @@
   "homepage": "https://github.com/majklost/AZK#readme",
   "dependencies": {
     "phaser": "^3.55.2",
-    "phaser3-rex-plugins": "^1.1.70"
+    "phaser3-rex-plugins": "^1.1.70",
+    "socket.io-client": "^4.5.1"
   },
   "devDependencies": {
+    "buffer": "^6.0.3",
     "parcel": "^2.5.0"
   }
 }
