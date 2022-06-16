@@ -14,13 +14,14 @@ const config = {
   type: Phaser.AUTO,
   width: xRes,
   height: yRes,
+
   physics: {
     default: "arcade",
     arcade: {},
   },
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    resolution: window.devicePixelRatio,
+    mode: Phaser.Scale.FIT,
   },
   resolution: window.devicePixelRatio,
   plugins: {
@@ -38,5 +39,6 @@ const config = {
 };
 //init of Phaser
 const game = new Phaser.Game(config);
+
 // game.scale.scaleMode = Phaser.Scale.FIT;
 //init of my properties

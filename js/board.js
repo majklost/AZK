@@ -66,18 +66,25 @@ export class Board {
   switchPlayer() {
     if (this.player == "B") this.player = "O";
     else if (this.player == "O") this.player = "B";
-    console.log("Player switched to " + this.player);
 
     eventCenter.emit("playerSwitch", this.player);
   }
   questionAnsweredRight(bool, TF = false) {
+    //Answered correctly
     if (bool) this.chosenTile.setState(this.player);
+    //Answered incorrectly and it is not True False question
     else if (!TF) this.chosenTile.setState("G");
+    //Answered incorrectly and it is True False question
     else {
       this.switchPlayer();
       this.chosenTile.setState(this.player);
     }
+    this.checkWin();
     this.switchPlayer();
+  }
+  checkWin() {
+    console.log(this.chosenTile);
+    console.log(this.boardModel);
   }
 }
 
@@ -103,7 +110,7 @@ function traverseModelBoard(boardModel, callback, numOfRows = 7) {
   let numOfColumns = 1;
   for (let rowIndex = 0; rowIndex < numOfRows; rowIndex++) {
     for (let i = 0; i < numOfColumns; i++) {
-      callback(boardModel[rowIndex][i]);
+      callback(boardModel[rowIndex][i], rowIndex, i);
     }
     numOfColumns += 1;
   }
