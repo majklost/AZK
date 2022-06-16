@@ -9,7 +9,13 @@ export class NormalQuestion extends Phaser.Scene {
     super("NormalQuestion");
     eventCenter.on("newQuestion", this.loadDataFromBoard.bind(this));
     eventCenter.on("playerSwitch", this.switchPlayerAndRerender.bind(this));
-    this.timer = new Timer(this, xRes / 2, yRes / 4 - 30, 7000);
+    this.timer = new Timer(
+      this,
+      xRes / 2,
+      yRes / 4 - 30,
+      7000,
+      this.releaseRFButtons.bind(this)
+    );
     //Is provided by eventEmitter
     this.switchHandler;
   }
@@ -96,8 +102,14 @@ export class NormalQuestion extends Phaser.Scene {
       yRes / 2 + 200,
       "false_button"
     );
-    const isTF = this.data.get("BoardData").isTF;
     this.right.scale = this.false.scale = 2 / 3;
+    this.right.setTint(0x666666);
+    this.false.setTint(0x666666);
+  }
+  releaseRFButtons() {
+    this.right.clearTint();
+    this.false.clearTint();
+    const isTF = this.data.get("BoardData").isTF;
     this.right.setInteractive();
     this.false.setInteractive();
     this.right.on("pointerdown", () => {

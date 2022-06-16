@@ -130,6 +130,7 @@ export class Board {
         connectedToSide.bottom
       ) {
         console.log(this.player, " WINS!");
+        this.ctx.renderWinner(this.player);
       }
     }
   }
