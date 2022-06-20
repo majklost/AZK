@@ -7,6 +7,17 @@ export class GameScene extends Phaser.Scene {
     this.boardModel = prepareModelBoard(7);
     this.player = "B";
     this.questionGenerator;
+    socket.on("GiveQuestion", (number, coords) => {
+      this.chosenTile = this.boardModel[coords.y][coords.x];
+      this.chosenTile.pickTile("PTRG");
+    });
+    socket.on("playerSwitch", (player) => {
+      this.player = player;
+      console.log("Current player is: ", player);
+    });
+    socket.on("timerStart", () => {
+      this.chosenTile.runTimer();
+    });
   }
   preload() {
     this.load.image("right_button", require("../assets/right_button.png"));
@@ -21,6 +32,11 @@ export class GameScene extends Phaser.Scene {
   }
   create() {
     this.render(1920 / 2, 200);
+  }
+  update() {
+    if (this.chosenTile && this.chosenTile.graphics) {
+      this.chosenTile.updateArc();
+    }
   }
   render(beginX, beginY) {
     //Sets space between each hexagon
@@ -39,7 +55,6 @@ export class GameScene extends Phaser.Scene {
   }
   init(ctx) {
     //ctx - context of main gamescene
-
     traverseModelBoard(this.boardModel, (tile) => {
       tile.init(this);
     });
