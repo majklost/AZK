@@ -1,6 +1,6 @@
 "use strict";
-import { socket } from "./socket.js";
 import Phaser from "phaser";
+
 //Neměnit rozměry textur! potřeba uupravit i v board template
 
 import { GameScene } from "./js/gameScene.js";

@@ -1,4 +1,5 @@
 import { xRes, yRes } from "../myconfig";
+import { socket } from "./socket";
 export class Timer {
   constructor(ctx, x, y, duration, releaseButtons) {
     this.ctx = ctx;
@@ -25,6 +26,7 @@ export class Timer {
       repeat: this.duration / 1000,
     };
     this.timer.once("pointerdown", () => {
+      socket.emit("timerStart");
       this.releaseButtons();
 
       this.timerText.setText(7);

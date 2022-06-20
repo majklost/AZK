@@ -7,3 +7,9 @@ socket.on("GiveQuestion", (number, coords) => {
   console.log(number);
   console.log(coords);
 });
+socket.on("playerSwitch", (player) => {
+  console.log("Current player is: ", player);
+});
+socket.on("timerStart", () => {
+  console.log("TIMER STARTED");
+});

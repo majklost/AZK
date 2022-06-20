@@ -73,8 +73,11 @@ export class Board {
     }
   }
   switchPlayer() {
+    console.log("SWITCHED");
     if (this.player == "B") this.player = "O";
     else if (this.player == "O") this.player = "B";
+
+    socket.emit("playerSwitch", this.player);
 
     eventCenter.emit("playerSwitch", this.player);
   }

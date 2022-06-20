@@ -8,4 +8,12 @@ io.on("connection", (socket) => {
 
     socket.broadcast.emit("GiveQuestion", number, coords);
   });
+  socket.on("playerSwitch", (player) => {
+    console.log("Player switched to:", player);
+
+    socket.broadcast.emit("playerSwitch", player);
+  });
+  socket.on("timerStart", () => {
+    socket.broadcast.emit("timerStart");
+  });
 });

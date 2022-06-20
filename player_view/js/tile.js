@@ -8,12 +8,10 @@ export class Tile {
     this.pyramidCoords = { x: undefined, y: undefined };
     this.numberHolder;
     this.tileState = undefined;
-    this.border = { left: false, right: false, bottom: false };
   }
   //gives context of scene to Tile
-  init(ctx, boardHandler) {
+  init(ctx) {
     this.ctx = ctx;
-    this.boardHandler = boardHandler;
   }
   //render Tile on exact position
   render(x, y, number) {
@@ -34,25 +32,20 @@ export class Tile {
       ]),
       Phaser.Geom.Polygon.Contains
     );
-    this.spriteTile.on("pointerdown", () => {
-      this.clickHandler();
-    });
-    this.spriteTile.setScale(0.5);
+    // this.spriteTile.setScale(0.5);
     this._renderNumber();
   }
   _renderNumber() {
     this.numberHolder = this.ctx.add
       .text(this.x, this.y, `${this.number}`, {
         fontFamily: "Arial",
-        fontSize: "24px",
+        fontSize: "48px",
         color: "#000000",
       })
       .setOrigin(0.5);
   }
-  clickHandler() {
-    this.boardHandler(this);
-  }
-  setColor() {
+
+  _setColor() {
     if (this.tileState == "B") {
       this.numberHolder.destroy();
       this.spriteTile.setTexture("blue_tile");
@@ -67,7 +60,7 @@ export class Tile {
     if (this.tileState == "B" || this.tileState == "O")
       this.spriteTile.removeListener("pointerdown");
 
-    this.setColor();
+    this._setColor();
   }
   setBorder(borderType) {
     this.border[borderType] = true;
