@@ -1,5 +1,5 @@
 "use strict";
-import { io } from "socket.io-client";
+import { socket } from "./socket.js";
 import Phaser from "phaser";
 //Neměnit rozměry textur! potřeba uupravit i v board template
 
@@ -28,11 +28,6 @@ const config = {
   scene: [GameScene],
 };
 
-const socket = io("http://localhost:3000");
-socket.on("connect", () => {
-  console.log(`You connected with id ${socket.id}`);
-});
-socket.emit("questionPick", "Hi from frontend");
 //init of Phaser
 const game = new Phaser.Game(config);
 

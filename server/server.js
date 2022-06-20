@@ -3,7 +3,9 @@ const io = require("socket.io")(3000, {
 });
 io.on("connection", (socket) => {
   console.log(socket.id);
-  socket.on("questionPick", (data) => {
-    console.log(data);
+  socket.on("QuestionPick", (number, coords) => {
+    console.log(number, coords);
+
+    socket.broadcast.emit("GiveQuestion", number, coords);
   });
 });

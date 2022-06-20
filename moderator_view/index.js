@@ -1,5 +1,5 @@
 "use strict";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 import Phaser from "phaser";
 //Neměnit rozměry textur! potřeba uupravit i v board template
 import RoundRectanglePlugin from "phaser3-rex-plugins/plugins/roundrectangle-plugin.js";
@@ -39,11 +39,6 @@ const config = {
   scene: [GameScene, NormalQuestion],
 };
 
-const socket = io("http://localhost:3000");
-socket.on("connect", () => {
-  console.log(`You connected with id ${socket.id}`);
-});
-socket.emit("questionPick", "Hi from frontend");
 //init of Phaser
 const game = new Phaser.Game(config);
 

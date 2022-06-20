@@ -1,3 +1,4 @@
+import { socket } from "./socket.js";
 import { Tile } from "./tile.js";
 import eventCenter from "./eventCenter.js";
 import { QuestionGenerator } from "./questionGenerator.js";
@@ -45,6 +46,13 @@ export class Board {
   //When clicked on Tile, this function is called
   boardHandler(tile) {
     this.chosenTile = tile;
+    console.log(this.chosenTile);
+
+    socket.emit(
+      "QuestionPick",
+      this.chosenTile.number,
+      this.chosenTile.pyramidCoords
+    );
 
     //Creates event with data to send to QuestionScene
     const actualQuestion = !this.chosenTile.tileState
@@ -84,12 +92,14 @@ export class Board {
     this.switchPlayer();
   }
   checkWin() {
+    //if all sides true -> winner
     const connectedToSide = {
       right: false,
       left: false,
       bottom: false,
     };
     const connectedNeighbours = [];
+    // Hexagon relative indexes of neighbours in array
     const relativeIndexes = [
       [-1, -1],
       [0, -1],
@@ -98,8 +108,6 @@ export class Board {
       [0, 1],
       [1, 1],
     ];
-    // console.log(this.chosenTile);
-    // console.log(this.boardModel);
     function checkNeighbours(tile) {
       relativeIndexes.forEach((relXY) => {
         const x = tile.pyramidCoords.x + relXY[0];
