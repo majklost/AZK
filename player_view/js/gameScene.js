@@ -7,9 +7,9 @@ export class GameScene extends Phaser.Scene {
     this.boardModel = prepareModelBoard(7);
     this.player = "B";
     this.questionGenerator;
-    socket.on("GiveQuestion", (number, coords) => {
+    socket.on("GiveQuestion", (number, coords, hints) => {
       this.chosenTile = this.boardModel[coords.y][coords.x];
-      this.chosenTile.pickTile("PTRG");
+      this.chosenTile.pickTile(hints);
     });
     socket.on("playerSwitch", (player) => {
       this.player = player;

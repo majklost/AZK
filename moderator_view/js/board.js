@@ -48,16 +48,25 @@ export class Board {
     this.chosenTile = tile;
     console.log(this.chosenTile);
 
-    socket.emit(
-      "QuestionPick",
-      this.chosenTile.number,
-      this.chosenTile.pyramidCoords
-    );
-
     //Creates event with data to send to QuestionScene
     const actualQuestion = !this.chosenTile.tileState
       ? this.questionGenerator.questions[tile.number - 1]
       : this.questionGenerator.TFQuestions[tile.number - 1];
+
+    const generateInicials = function (words) {
+      let InicialString = "";
+      const wordArray = words.split(" ");
+      wordArray.forEach((word) => {
+        InicialString += word[0];
+      });
+      return InicialString;
+    };
+    socket.emit(
+      "QuestionPick",
+      this.chosenTile.number,
+      this.chosenTile.pyramidCoords,
+      generateInicials(actualQuestion.answer)
+    );
 
     if (actualQuestion) {
       this.ctx.scene.switch("NormalQuestion");

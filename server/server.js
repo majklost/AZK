@@ -3,10 +3,10 @@ const io = require("socket.io")(3000, {
 });
 io.on("connection", (socket) => {
   console.log(socket.id);
-  socket.on("QuestionPick", (number, coords) => {
-    console.log(number, coords);
+  socket.on("QuestionPick", (number, coords, hints) => {
+    console.log(number, coords, hints);
 
-    socket.broadcast.emit("GiveQuestion", number, coords);
+    socket.broadcast.emit("GiveQuestion", number, coords, hints);
   });
   socket.on("playerSwitch", (player) => {
     console.log("Player switched to:", player);
@@ -19,9 +19,9 @@ io.on("connection", (socket) => {
   socket.on("tileResolved", (state) => {
     socket.broadcast.emit("tileResolved", state);
   });
-  // socket.on("reload", () => {
-  //   console.log("Moderator reloaded");
-  // });
+  socket.on("disconnect", () => {
+    console.log(socket.id, "Disconnected");
+  });
   socket.on("win", (winner) => {
     socket.broadcast.emit("win", winner);
   });

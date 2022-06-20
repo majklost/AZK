@@ -46,7 +46,6 @@ export class Tile {
   }
   setState(state) {
     this.tileState = state;
-    console.log("NEW STATE");
 
     this._setColor();
   }
@@ -66,8 +65,6 @@ export class Tile {
     // const timer = this.ctx.add.circle(0, 0, 70, 0xff0000);
     this.numberHolder.setText(text);
     this.container.setDepth(2);
-    console.log(this.spriteTile.width);
-    console.log(this.numberHolder.width);
 
     if (this.spriteTile.width - 45 < this.numberHolder.width) {
       this.numberHolder.setScale(
