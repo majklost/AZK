@@ -16,4 +16,13 @@ io.on("connection", (socket) => {
   socket.on("timerStart", () => {
     socket.broadcast.emit("timerStart");
   });
+  socket.on("tileResolved", (state) => {
+    socket.broadcast.emit("tileResolved", state);
+  });
+  // socket.on("reload", () => {
+  //   console.log("Moderator reloaded");
+  // });
+  socket.on("win", (winner) => {
+    socket.broadcast.emit("win", winner);
+  });
 });

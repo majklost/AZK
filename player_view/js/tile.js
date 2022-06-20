@@ -46,6 +46,7 @@ export class Tile {
   }
   setState(state) {
     this.tileState = state;
+    console.log("NEW STATE");
 
     this._setColor();
   }
@@ -74,7 +75,7 @@ export class Tile {
       );
     }
 
-    this.ctx.tweens.add({
+    this.timerTween = this.ctx.tweens.add({
       targets: this.container,
       duration: 1000,
       scaleX: 1.3,
@@ -107,6 +108,10 @@ export class Tile {
     });
   }
   resolveTile() {
+    this.container.setDepth(0);
+    this.timerTween.remove();
     this.numberHolder.setScale(1);
+    this.graphics.destroy();
+    this.container.setScale(1);
   }
 }

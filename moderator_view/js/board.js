@@ -82,15 +82,19 @@ export class Board {
     eventCenter.emit("playerSwitch", this.player);
   }
   questionAnsweredRight(bool, TF = false) {
+    let state;
     //Answered correctly
-    if (bool) this.chosenTile.setState(this.player);
+    if (bool) state = this.player;
     //Answered incorrectly and it is not True False question
-    else if (!TF) this.chosenTile.setState("G");
+    else if (!TF) state = "G";
     //Answered incorrectly and it is True False question
     else {
       this.switchPlayer();
-      this.chosenTile.setState(this.player);
+      state = this.player;
     }
+    socket.emit("tileResolved", state);
+
+    this.chosenTile.setState(state);
     this.checkWin();
     this.switchPlayer();
   }

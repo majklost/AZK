@@ -18,6 +18,35 @@ export class GameScene extends Phaser.Scene {
     socket.on("timerStart", () => {
       this.chosenTile.runTimer();
     });
+    socket.on("tileResolved", (state) => {
+      this.chosenTile.resolveTile();
+      this.chosenTile.setState(state);
+    });
+    socket.on("win", (winner) => {
+      this.renderWinner(winner);
+    });
+  }
+  renderWinner(winner) {
+    const rec = this.add.rectangle(0, 0, 1920 * 2, 1080 * 2, 0x00ff00, 0.1);
+    rec.setInteractive();
+    const text = this.add.text(
+      1920 / 2,
+      1080 / 2,
+      `${winner == "O" ? "Orange" : "Blue"} player wins`,
+      {
+        color: 0xffffff,
+        fontFamily: "Arial",
+        fontSize: "80px",
+        fontStyle: "bold",
+      }
+    );
+    text.setOrigin(0.5);
+    const img = this.add.image(1920 / 2, 1080 / 2 + 70, "button");
+    img.setScale(0.9);
+    img.setInteractive();
+    img.on("pointerdown", () => {
+      location.reload();
+    });
   }
   preload() {
     this.load.image("right_button", require("../assets/right_button.png"));

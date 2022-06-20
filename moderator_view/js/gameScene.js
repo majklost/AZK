@@ -1,5 +1,7 @@
 import { Board } from "./board.js";
+import { socket } from "./socket.js";
 import { xRes, yRes } from "../myconfig.js";
+import { socket } from "./socket.js";
 export class GameScene extends Phaser.Scene {
   constructor() {
     super("GameScene");
@@ -21,6 +23,7 @@ export class GameScene extends Phaser.Scene {
     this.board.render(xRes / 2, 100);
   }
   renderWinner(winner) {
+    socket.emit("win", winner);
     const rec = this.add.rectangle(0, 0, xRes * 2, yRes * 2, 0x00ff00, 0.1);
     rec.setInteractive();
     const text = this.add.text(

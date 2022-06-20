@@ -7,3 +7,6 @@ socket.on("GiveQuestion", (number, coords) => {
   console.log(number);
   console.log(coords);
 });
+window.addEventListener("unload", (e) => {
+  e.preventDefault();
+});
