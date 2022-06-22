@@ -7,6 +7,11 @@ export class QuestionGenerator {
     this.questions = [];
     this.TFQuestions = [];
   }
+  async getPin() {
+    const response = await fetch("http://localhost:8080/moderator");
+    const results = await response.json();
+    console.log(results);
+  }
   async getQuestions() {
     try {
       const response = await fetch(API);
@@ -22,6 +27,7 @@ export class QuestionGenerator {
       //TODO: solve errors and display them to user
     } catch (err) {
       console.error(err);
+      this.getQuestions();
     }
   }
   async getTFQuestions() {

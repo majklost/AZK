@@ -24,25 +24,24 @@ export class GameScene extends Phaser.Scene {
   }
   renderWinner(winner) {
     socket.emit("win", winner);
-    const rec = this.add.rectangle(0, 0, xRes * 2, yRes * 2, 0x00ff00, 0.1);
-    rec.setInteractive();
-    const text = this.add.text(
-      xRes / 2,
-      yRes / 2,
-      `${winner == "O" ? "Orange" : "Blue"} player wins`,
-      {
-        color: 0xffffff,
-        fontFamily: "Arial",
-        fontSize: "40px",
-        fontStyle: "bold",
-      }
-    );
-    text.setOrigin(0.5);
+    const text = `${winner == "O" ? "Orange" : "Blue"} player wins`;
+    this.renderOverlay(text);
     const img = this.add.image(xRes / 2, yRes / 2 + 70, "button");
     img.setScale(0.4);
     img.setInteractive();
     img.on("pointerdown", () => {
       location.reload();
     });
+  }
+  renderOverlay(textString) {
+    const rec = this.add.rectangle(0, 0, xRes * 2, yRes * 2, 0x00ff00, 0.1);
+    rec.setInteractive();
+    const text = this.add.text(xRes / 2, yRes / 2, textString, {
+      color: 0xffffff,
+      fontFamily: "Arial",
+      fontSize: "40px",
+      fontStyle: "bold",
+    });
+    text.setOrigin(0.5);
   }
 }

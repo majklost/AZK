@@ -24,6 +24,7 @@ export class Board {
     });
     this.questionGenerator.getQuestions();
     this.questionGenerator.getTFQuestions();
+    this.pin = this.questionGenerator.getPin();
     traverseModelBoard(this.boardModel, this.setBorder);
   }
 

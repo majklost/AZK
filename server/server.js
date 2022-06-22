@@ -1,3 +1,25 @@
+const app = require("express")();
+const cors = require("cors");
+const port = 8080;
+const path = require("path");
+const sessions = {};
+
+app.use(cors());
+
+function generatePin(myPin) {
+  const pin = Math.floor(100000 + Math.random() * 900000);
+  if (sessions[pin]) return generatePin();
+  else return pin;
+}
+
+app.get("/moderator", (req, res) => {
+  res.json({ pin: generatePin() });
+});
+
+app.listen(port, () => {
+  console.log("listening");
+});
+
 const io = require("socket.io")(3000, {
   cors: { origin: ["http://localhost:1234", "http://localhost:64002"] },
 });

@@ -41,7 +41,7 @@ export class GameScene extends Phaser.Scene {
       }
     );
     text.setOrigin(0.5);
-    const img = this.add.image(1920 / 2, 1080 / 2 + 70, "button");
+    const img = this.add.image(1920 / 2, 1080 / 2 + 120, "button");
     img.setScale(0.9);
     img.setInteractive();
     img.on("pointerdown", () => {
