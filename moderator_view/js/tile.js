@@ -61,7 +61,7 @@ export class Tile {
       this.spriteTile.setTexture("red_tile");
     } else if (this.tileState == "G") this.spriteTile.setTexture("grey_tile");
   }
-  setState(state) {
+  setState(state = this.tileState.status) {
     this.tileState = state;
 
     if (this.tileState == "B" || this.tileState == "O")

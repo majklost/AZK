@@ -14,6 +14,14 @@ export class Board {
     this.player = "B";
     //Object which gives questions to game
     this.network = new Network();
+    eventCenter.on("restoreSession", (hideOverlay) => {
+      traverseModelBoard(this.boardModel, (tile, rowIndex, i) => {
+        tile.tileState = this.network.backup.boardModel[rowIndex][i];
+        tile.setState();
+      });
+      this.player = this.network.backup.nextPlayer;
+      hideOverlay();
+    });
   }
   //initialize each tile (set their sprites), gets questions from API
   init(ctx) {
@@ -65,6 +73,7 @@ export class Board {
       });
       return InicialString;
     };
+
     socket.emit(
       "QuestionPick",
       this.chosenTile.number,
@@ -105,7 +114,13 @@ export class Board {
       this.switchPlayer();
       state = this.player;
     }
-    socket.emit("tileResolved", state);
+    socket.emit(
+      "tileResolved",
+      state,
+      this.chosenTile.pyramidCoords,
+      this.player,
+      this.network.pin
+    );
 
     this.chosenTile.setState(state);
     this.checkWin();

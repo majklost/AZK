@@ -1,4 +1,5 @@
 import { API } from "../myconfig";
+import eventCenter from "./eventCenter";
 export class Network {
   //Sets whether you are using own questions or one from API
   constructor(mode = "Trivia") {
@@ -7,12 +8,15 @@ export class Network {
     this.questions = [];
     this.TFQuestions = [];
     this.pin;
+    this.backup;
+    hookEventListeners();
   }
   async getPin() {
     if (localStorage.getItem("pin")) {
       const temporaryPin = localStorage.getItem("pin");
       if (await this.checkSession(temporaryPin)) {
         this.pin = temporaryPin;
+        eventCenter.emit("oldSessionFound");
       } else {
         localStorage.removeItem("pin");
         this.getPin();
@@ -33,14 +37,18 @@ export class Network {
       console.error("Unable to get Pin", err);
     }
   }
-  async checkSession(pin) {
+
+  async checkSession(MyPin) {
     try {
       const response = await fetch(
-        `http://localhost:8080/session-check/?pin=${pin}`
+        `http://localhost:8080/session-check/?pin=${MyPin}`
       );
-      const { bool } = await response.json();
+      const session = await response.json();
 
-      return bool;
+      if (session.pin) {
+        this.backup = session.pin;
+        return true;
+      } else return false;
     } catch (error) {
       return false;
     }
@@ -48,7 +56,7 @@ export class Network {
 
   async getQuestions() {
     try {
-      const response = await fetch(API);
+      const response = await fetch(API, { mode: "cors" });
       const { results } = await response.json();
 
       results.forEach((result) => {
@@ -73,4 +81,11 @@ export class Network {
       this.TFQuestions.push(TFQuestion);
     }
   }
+}
+
+function hookEventListeners() {
+  eventCenter.on("killSession", () => {
+    localStorage.removeItem("pin");
+    location.reload();
+  });
 }
