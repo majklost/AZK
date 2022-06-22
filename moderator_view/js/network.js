@@ -1,5 +1,6 @@
 import { API } from "../myconfig";
 import eventCenter from "./eventCenter";
+import { socket } from "./socket";
 export class Network {
   //Sets whether you are using own questions or one from API
   constructor(mode = "Trivia") {
@@ -22,8 +23,9 @@ export class Network {
         this.getPin();
       }
     } else {
-      this.getNewPin();
+      await this.getNewPin();
     }
+    socket.emit("join-room-moderator", this.pin);
   }
 
   async getNewPin() {

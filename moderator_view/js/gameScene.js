@@ -28,7 +28,7 @@ export class GameScene extends Phaser.Scene {
     this.board.render(xRes / 2, 100);
   }
   renderWinner(winner) {
-    socket.emit("win", winner);
+    socket.emit("win", this.board.network.pin, winner);
     const text = `${winner == "O" ? "Orange" : "Blue"} player wins`;
     this.renderOverlay(text);
     const img = this.add.image(xRes / 2, yRes / 2 + 70, "button");

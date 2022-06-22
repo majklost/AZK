@@ -43,30 +43,34 @@ const io = require("socket.io")(3000, {
 });
 io.on("connection", (socket) => {
   console.log(socket.id);
-  socket.on("QuestionPick", (number, coords, hints) => {
+  socket.on("QuestionPick", (room, number, coords, hints) => {
     // console.log(number, coords, hints, pin);
-
-    socket.broadcast.emit("GiveQuestion", number, coords, hints);
+    if (room) socket.to(room).emit("GiveQuestion", number, coords, hints);
   });
-  socket.on("playerSwitch", (player) => {
+  socket.on("playerSwitch", (room, player) => {
     console.log("Player switched to:", player);
 
-    socket.broadcast.emit("playerSwitch", player);
+    if (room) socket.to(room).emit("playerSwitch", player);
   });
-  socket.on("timerStart", () => {
-    socket.broadcast.emit("timerStart");
+  socket.on("timerStart", (room) => {
+    if (room) socket.to(room).emit("timerStart");
   });
-  socket.on("tileResolved", (state, coords, nextPlayer, pin) => {
+  socket.on("tileResolved", (room, state, coords, nextPlayer, pin) => {
     const session = sessions[`${pin}`];
     session.boardModel[coords.y][coords.x].status = state;
     session.nextPlayer = `${nextPlayer == "O" ? "B" : "O"}`;
 
-    socket.broadcast.emit("tileResolved", state);
+    if (room) socket.to(room).emit("tileResolved", state);
   });
   socket.on("disconnect", () => {
     console.log(socket.id, "Disconnected");
   });
   socket.on("win", (winner) => {
     socket.broadcast.emit("win", winner);
+  });
+  socket.on("join-room-moderator", (pin) => {
+    console.log(socket.id, " wants to join room ", pin);
+    socket.join(pin);
+    if (sessions[pin]) sessions[pin].moderatorID = socket.id;
   });
 });

@@ -22,6 +22,9 @@ export class Board {
       this.player = this.network.backup.nextPlayer;
       hideOverlay();
     });
+    eventCenter.on("timerStart", () => {
+      socket.emit("timerStart", this.network.pin);
+    });
   }
   //initialize each tile (set their sprites), gets questions from API
   init(ctx) {
@@ -99,7 +102,7 @@ export class Board {
     if (this.player == "B") this.player = "O";
     else if (this.player == "O") this.player = "B";
 
-    socket.emit("playerSwitch", this.player);
+    socket.emit("playerSwitch", this.network.pin, this.player);
 
     eventCenter.emit("playerSwitch", this.player);
   }
@@ -116,6 +119,7 @@ export class Board {
     }
     socket.emit(
       "tileResolved",
+      this.network.pin,
       state,
       this.chosenTile.pyramidCoords,
       this.player,
