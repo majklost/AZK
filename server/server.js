@@ -1,19 +1,29 @@
+"use strict";
 const app = require("express")();
 const cors = require("cors");
 const port = 8080;
 const path = require("path");
-const sessions = {};
+const sessions = { 111: {} };
 
 app.use(cors());
 
-function generatePin(myPin) {
+function generatePin() {
   const pin = Math.floor(100000 + Math.random() * 900000);
   if (sessions[pin]) return generatePin();
   else return pin;
 }
 
 app.get("/moderator", (req, res) => {
-  res.json({ pin: generatePin() });
+  const pin = generatePin();
+  sessions[pin] = { created: new Date() };
+  res.json({ pin: pin });
+  console.log(sessions);
+});
+app.get("/session-check", (req, res) => {
+  let pin = req.query.pin;
+  if (sessions[pin]) res.json({ bool: true });
+  else res.json({ bool: false });
+  console.log(sessions);
 });
 
 app.listen(port, () => {

@@ -1,7 +1,7 @@
 import { socket } from "./socket.js";
 import { Tile } from "./tile.js";
 import eventCenter from "./eventCenter.js";
-import { QuestionGenerator } from "./questionGenerator.js";
+import { Network } from "./network.js";
 
 //Main class of game, takes care of loading questions, displaying tiles and checking winner
 export class Board {
@@ -13,7 +13,7 @@ export class Board {
     //Current player, who starts
     this.player = "B";
     //Object which gives questions to game
-    this.questionGenerator = new QuestionGenerator();
+    this.network = new Network();
   }
   //initialize each tile (set their sprites), gets questions from API
   init(ctx) {
@@ -22,14 +22,17 @@ export class Board {
     traverseModelBoard(this.boardModel, (tile) => {
       tile.init(this.ctx, this.boardHandler.bind(this));
     });
-    this.questionGenerator.getQuestions();
-    this.questionGenerator.getTFQuestions();
-    this.pin = this.questionGenerator.getPin();
+    this.network.getQuestions();
+    this.network.getTFQuestions();
+    this.network.getPin();
+
     traverseModelBoard(this.boardModel, this.setBorder);
   }
 
   //render whole board, when given where should first tile be positioned
   render(beginX, beginY) {
+    console.log(this.network.pin);
+
     //Sets space between each hexagon
     const template = {
       width: 140,
@@ -51,8 +54,8 @@ export class Board {
 
     //Creates event with data to send to QuestionScene
     const actualQuestion = !this.chosenTile.tileState
-      ? this.questionGenerator.questions[tile.number - 1]
-      : this.questionGenerator.TFQuestions[tile.number - 1];
+      ? this.network.questions[tile.number - 1]
+      : this.network.TFQuestions[tile.number - 1];
 
     const generateInicials = function (words) {
       let InicialString = "";
