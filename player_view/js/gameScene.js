@@ -1,8 +1,10 @@
 import { socket } from "./socket.js";
 import { Tile } from "./tile.js";
 const HTML = `       <div class="login">
+<form>
 <input type="number" placeholder="PIN" id="pin" name="pin" min="100000" max="999999" title="" >
-<input id="submitBTN" type="submit" value="Join Pin" name="loginButton">
+<input id="submitBTN" type=submit value="send Pin" name="loginButton">
+</form>
 </div>
 <div class="shadow"></div>`;
 
@@ -31,12 +33,20 @@ export class GameScene extends Phaser.Scene {
     });
     socket.on("win", (winner) => {
       this.renderWinner(winner);
+      localStorage.removeItem("lastPin");
     });
-    socket.on("join-room", (joined) => {
-      console.log(joined);
+    socket.on("join-room", (joined, session) => {
       if (joined) {
         this.HTML.login.style.display = "none";
         this.hideOverlay.call(this);
+        localStorage.setItem("lastPin", this.HTML.pinField.value.toString());
+        console.log(session);
+
+        if (!session.numOfSaves) return;
+        traverseModelBoard(this.boardModel, (tile, rowIndex, i) => {
+          tile.tileState = session.boardModel[rowIndex][i];
+          tile.setState();
+        });
       } else {
         this.HTML.pinField.setCustomValidity("This pin does not exist");
         this.HTML.pinField.reportValidity();
@@ -146,10 +156,18 @@ export class GameScene extends Phaser.Scene {
     const login = document.querySelector(".login");
     const loginBTN = document.querySelector("#submitBTN");
     const pinField = document.querySelector("#pin");
+    if (localStorage.getItem("lastPin")) {
+      pinField.value = localStorage.getItem("lastPin");
+    }
+    loginBTN.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log(pinField.value);
+      if (pinField.value.length != 6) {
+        pinField.setCustomValidity("Pin is 6-digit");
+        pinField.reportValidity();
 
-    loginBTN.addEventListener("click", () => {
-      console.log(pinField.value.length);
-      if (pinField.value.length != 6) return;
+        return;
+      }
       socket.emit("join-room-player", pinField.value);
     });
     this.HTML = {

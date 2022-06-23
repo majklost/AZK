@@ -10,6 +10,13 @@ export class GameScene extends Phaser.Scene {
     eventCenter.on("oldSessionFound", () => {
       this.load.on("complete", this.askRestoreSession.bind(this));
     });
+    eventCenter.on("gotPin", (pin) => {
+      this.hideOverlay();
+      this.renderOverlay(`Pin is ${pin} \nPlease connect the player`);
+    });
+    socket.on("player-joined", () => {
+      this.hideOverlay();
+    });
     this.elements = [];
   }
   preload() {
@@ -90,7 +97,7 @@ export class GameScene extends Phaser.Scene {
 
   hideOverlay() {
     this.elements.forEach((element) => {
-      element.visible = false;
+      element.destroy();
     });
   }
 }

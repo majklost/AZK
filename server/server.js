@@ -6,6 +6,7 @@ const path = require("path");
 const SessionFunctions = require("./sessionFunctions");
 
 const sessions = {};
+const nowConnected = [];
 
 app.use(cors());
 //generates 6-digit number which is not in sessions
@@ -27,25 +28,23 @@ app.get("/moderator", (req, res) => {
     ended: false,
   };
   res.json({ pin: pin });
-  console.log(sessions);
 });
 
 app.get("/get-session", (req, res) => {
   let pin = req.query.pin;
   if (sessions[pin] && !sessions[pin].ended) res.json({ pin: sessions[pin] });
   else res.json({ pin: false });
-  console.log(sessions);
 });
 
-app.listen(port, () => {
-  console.log("listening");
-});
+app.listen(port, () => {});
 
 const io = require("socket.io")(3000, {
   cors: { origin: ["http://localhost:1234", "http://localhost:64002"] },
 });
 io.on("connection", (socket) => {
   console.log(socket.id);
+  nowConnected.push(socket.id);
+
   socket.on("QuestionPick", (room, number, coords, hints) => {
     console.log(room, number, coords, hints);
     if (room)
@@ -68,28 +67,49 @@ io.on("connection", (socket) => {
     if (room) socket.to(room.toString()).emit("tileResolved", state);
   });
   socket.on("disconnect", () => {
-    console.log(socket.id, "Disconnected");
+    nowConnected.forEach((el, i) => {
+      if (el == socket.id) nowConnected.splice(i);
+    });
+
+    // const session = Object.keys(sessions).find((key) => {
+    //   sessions[key].moderatorID == socket.id ||
+    //     sessions[key].playerID == socket.id;
+    // });
   });
   socket.on("win", (room, winner) => {
     sessions[room].ended = true;
     socket.to(room.toString()).emit("win", winner);
   });
   socket.on("join-room-moderator", (pin) => {
-    console.log(socket.id, " wants to join room ", pin);
-    socket.join(pin);
+    socket.join(pin.toString());
+    console.log(pin);
+
     if (sessions[pin]) sessions[pin].moderatorID = socket.id;
   });
   socket.on("join-room-player", (pin) => {
-    console.log("ID:", socket.id, " wants to join room with pin ", pin);
     if (sessions[pin]) {
       socket.join(pin);
-      console.log("JOINED ", pin);
 
-      io.to(pin.toString()).emit("join-room", true);
+      io.to(pin.toString()).emit("join-room", true, sessions[pin]);
+      sessions[pin].playerID = socket.id;
+      io.to(pin.toString()).emit("player-joined");
     } else {
       console.log(socket.id);
 
-      io.to(pin.toString()).emit("join-room", false);
+      io.to(socket.id).emit("join-room", false);
     }
   });
 });
+
+function sessionCleaner() {
+  let deleted = 0;
+  Object.entries(sessions).forEach((sessionArr) => {
+    const pin = sessionArr[0];
+    if (!nowConnected.includes(sessionArr[1].moderatorID)) {
+      delete sessions[pin];
+      deleted += 1;
+    }
+  });
+  console.log(`${deleted} sessions have been deleted`);
+}
+setInterval(sessionCleaner, 1000 * 60 * 5);

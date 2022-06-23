@@ -25,9 +25,10 @@ export class Network {
     } else {
       await this.getNewPin();
     }
-    console.log(this.pin);
+    eventCenter.emit("gotPin", this.pin);
 
     socket.emit("join-room-moderator", this.pin);
+    console.log(this.pin);
   }
 
   async getNewPin() {
