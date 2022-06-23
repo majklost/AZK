@@ -129,6 +129,7 @@ export class NormalQuestion extends Phaser.Scene {
       sprite.setDepth(-1);
       return sprite;
     }
+
     const actualPlayer = this.data.get("BoardData").actualPlayer;
     if (actualPlayer == "B")
       this.switch = renderSwitch.call(this, "switchToOrange");

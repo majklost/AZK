@@ -1,5 +1,11 @@
 import { socket } from "./socket.js";
 import { Tile } from "./tile.js";
+const HTML = `       <div class="login">
+<input type="number" placeholder="PIN" id="pin" name="pin" min="100000" max="999999" title="" >
+<input id="submitBTN" type="submit" value="Join Pin" name="loginButton">
+</div>
+<div class="shadow"></div>`;
+
 export class GameScene extends Phaser.Scene {
   constructor() {
     super("GameScene");
@@ -7,6 +13,7 @@ export class GameScene extends Phaser.Scene {
     this.boardModel = prepareModelBoard(7);
     this.player = "B";
     this.questionGenerator;
+    this.elements = [];
     socket.on("GiveQuestion", (number, coords, hints) => {
       this.chosenTile = this.boardModel[coords.y][coords.x];
       this.chosenTile.pickTile(hints);
@@ -25,30 +32,20 @@ export class GameScene extends Phaser.Scene {
     socket.on("win", (winner) => {
       this.renderWinner(winner);
     });
-  }
-  renderWinner(winner) {
-    const rec = this.add.rectangle(0, 0, 1920 * 2, 1080 * 2, 0x00ff00, 0.1);
-    rec.setInteractive();
-    const text = this.add.text(
-      1920 / 2,
-      1080 / 2,
-      `${winner == "O" ? "Orange" : "Blue"} player wins`,
-      {
-        color: 0xffffff,
-        fontFamily: "Arial",
-        fontSize: "80px",
-        fontStyle: "bold",
+    socket.on("join-room", (joined) => {
+      console.log(joined);
+      if (joined) {
+        this.HTML.login.style.display = "none";
+        this.hideOverlay.call(this);
+      } else {
+        this.HTML.pinField.setCustomValidity("This pin does not exist");
+        this.HTML.pinField.reportValidity();
       }
-    );
-    text.setOrigin(0.5);
-    const img = this.add.image(1920 / 2, 1080 / 2 + 120, "button");
-    img.setScale(0.9);
-    img.setInteractive();
-    img.on("pointerdown", () => {
-      location.reload();
     });
   }
+
   preload() {
+    document.querySelector("body").insertAdjacentHTML("afterbegin", HTML);
     this.load.image("right_button", require("../assets/right_button.png"));
     this.load.image("false_button", require("../assets/false_button.png"));
     this.load.image("base_tile", require("../assets/basic_tile.png"));
@@ -61,6 +58,8 @@ export class GameScene extends Phaser.Scene {
   }
   create() {
     this.render(1920 / 2, 200);
+    this.renderOverlay("");
+    this.sendPin();
   }
   update() {
     if (this.chosenTile && this.chosenTile.graphics) {
@@ -89,6 +88,74 @@ export class GameScene extends Phaser.Scene {
     });
     // this.questionGenerator.getQuestions();
     // this.questionGenerator.getTFQuestions();
+  }
+  renderWinner(winner) {
+    const text = `${winner == "O" ? "Orange" : "Blue"} player wins`;
+    this.renderOverlay(text);
+    const img = this.add.image(1920 / 2, 1080 / 2 + 70, "button");
+    img.setScale(0.4);
+    img.setDepth(8);
+    img.setInteractive();
+    img.on("pointerdown", () => {
+      location.reload();
+    });
+  }
+
+  renderOverlay(textString) {
+    const container = this.add.container(1920 / 2, 1080 / 2);
+    const rec = this.add.rectangle(0, 0, 1920 * 2, 1080 * 2, 0x00ff00, 0.1);
+    let background = undefined;
+    let text = undefined;
+    rec.setInteractive();
+    if (textString) {
+      text = this.add.text(0, 0, textString, {
+        color: 0xffffff,
+
+        fontFamily: "Arial",
+        fontSize: "80px",
+        fontStyle: "bold",
+        wordWrap: { width: 700 },
+        align: "center",
+      });
+      background = this.add.rectangle(
+        text.x,
+        text.y,
+        text.width,
+        text.height,
+        0x46676e
+      );
+    }
+    container.add(rec);
+    if (textString) {
+      container.add(background);
+      container.add(text);
+      text.setOrigin(0.5);
+      background.setDepth(3);
+    }
+
+    container.setDepth(4);
+    this.elements.push(container);
+  }
+
+  hideOverlay() {
+    this.elements.forEach((element) => {
+      element.destroy();
+    });
+  }
+  sendPin() {
+    const login = document.querySelector(".login");
+    const loginBTN = document.querySelector("#submitBTN");
+    const pinField = document.querySelector("#pin");
+
+    loginBTN.addEventListener("click", () => {
+      console.log(pinField.value.length);
+      if (pinField.value.length != 6) return;
+      socket.emit("join-room-player", pinField.value);
+    });
+    this.HTML = {
+      login,
+      pinField,
+    };
   }
 }
 

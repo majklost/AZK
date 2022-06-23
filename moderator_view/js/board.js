@@ -42,8 +42,6 @@ export class Board {
 
   //render whole board, when given where should first tile be positioned
   render(beginX, beginY) {
-    console.log(this.network.pin);
-
     //Sets space between each hexagon
     const template = {
       width: 140,
@@ -79,6 +77,7 @@ export class Board {
 
     socket.emit(
       "QuestionPick",
+      this.network.pin,
       this.chosenTile.number,
       this.chosenTile.pyramidCoords,
       generateInicials(actualQuestion.answer)

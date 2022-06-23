@@ -20,11 +20,13 @@ export class Network {
         eventCenter.emit("oldSessionFound");
       } else {
         localStorage.removeItem("pin");
-        this.getPin();
+        await this.getNewPin();
       }
     } else {
       await this.getNewPin();
     }
+    console.log(this.pin);
+
     socket.emit("join-room-moderator", this.pin);
   }
 
@@ -43,11 +45,11 @@ export class Network {
   async checkSession(MyPin) {
     try {
       const response = await fetch(
-        `http://localhost:8080/session-check/?pin=${MyPin}`
+        `http://localhost:8080/get-session/?pin=${MyPin}`
       );
       const session = await response.json();
 
-      if (session.pin) {
+      if (session.pin && session.pin.numOfSaves) {
         this.backup = session.pin;
         return true;
       } else return false;
