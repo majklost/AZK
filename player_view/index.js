@@ -1,5 +1,4 @@
 "use strict";
-import Phaser from "phaser";
 
 //Neměnit rozměry textur! potřeba uupravit i v board template
 

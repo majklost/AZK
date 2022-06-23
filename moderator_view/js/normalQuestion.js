@@ -1,4 +1,3 @@
-import Phaser from "phaser";
 import eventCenter from "./eventCenter";
 import { xRes, yRes } from "../myconfig";
 import { Timer } from "./timer";

@@ -1,6 +1,5 @@
 "use strict";
 // import { io } from "socket.io-client";
-import Phaser from "phaser";
 //Neměnit rozměry textur! potřeba uupravit i v board template
 import RoundRectanglePlugin from "phaser3-rex-plugins/plugins/roundrectangle-plugin.js";
 import { xRes, yRes } from "./myconfig.js";
