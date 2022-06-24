@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+    
+    <script defer src="script.js"></script>
+    <title>AZK-Creator</title>
+</head>
+<body>
+    
+    <header>
+        <h1>
+            AZK Creator
+        </h1>
+        <div class="buttons">
+
+            <input type="file" id="selectedFile" style="display: none;" />
+            <input class="button-18" type="button" value="Nahrát otázky" onclick="document.getElementById('selectedFile').click();" />
+            <input type="button" class="button-18" value="Hrát">
+        </div>      
+    </header>
+    <section class="questions">
+        <div class="questionContainer">
+            <div class="wrap">
+                <div class="number"><p>1</p></div>
+                <div class="question">
+                    <label class="textLabel" for="textField">Otázka</label>
+                    <textarea class="textField" placeholder="Napište otázku"></textarea>
+                </div>
+                <div class="shortcut">
+                    <label class="textLabel" for="textField">Zkratka</label>
+                    <input class="hint" type="text"  onkeypress="this.style.width = (this.value.length + 3) + 'ch';
+                    " maxlength="6">
+                </div>
+                <div class="answer">
+                    <label class="textLabel" for="textField">Odpověď</label>
+                    <textarea class="textField" placeholder="Napište odpověď"></textarea>
+                </div>
+                <input type="button" class="button-18" value="Vyčistit">
+            </div>
+        </div>
+
+    </section>
+    <div id="separator"> <h2 >Ano/Ne otázky</h2></div>
+   
+    <section class="questions">
+        <div class="questionContainer TFContainer">
+            <div class="wrap">
+                <div class="number"><p>1</p></div>
+                <div class="question">
+                    <label class="textLabel" for="textField">Otázka</label>
+                    <textarea class="textField" placeholder="Napište otázku"></textarea>
+                </div>
+                <div class="TF">
+                    <label class="textLabel" for="textField">Správná odpověď</label>
+                    
+
+
+                    <div class="TFButtons">                    <input type="button" value="ANO">
+                        <input type="button" value="NE"></div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="footerButtons">
+        <input type="button" class="button-18" value="Generovat zkratky">
+        <input type="button" class="button-18" value="Zamíchat otázky">
+        <input type="button" class="button-18" value="Stáhnout otázky">
+        <input type="button" class="button-18" value="  Hrát  ">
+    </footer>
+    
+</body>
+</html>
+<!-- HTML !-->
+
+
+

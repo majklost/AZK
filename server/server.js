@@ -15,6 +15,11 @@ function generatePin() {
   if (sessions[pin]) return generatePin();
   else return pin;
 }
+app.get("/", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "/src/createQuestions", "createQuestions.html")
+  );
+});
 
 app.get("/moderator", (req, res) => {
   const pin = generatePin();
