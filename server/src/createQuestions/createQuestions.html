@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="style.css">
-    
+    <script defer src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
     <script defer src="script.js"></script>
+
+
     <title>AZK-Creator</title>
 </head>
 <body>
@@ -17,8 +19,8 @@
             AZK Creator
         </h1>
         <div class="buttons">
-
-            <input type="file" id="selectedFile" style="display: none;" />
+            <input type="button" class="button-18 generateHints" value="Generovat zkratky">
+            <input type="file" id="selectedFile" style="display: none;" accept=".azk" />
             <input class="button-18 questionLoadBTN" type="button" value="Nahrát otázky" onclick="document.getElementById('selectedFile').click();" />
         </div>      
     </header>
@@ -35,9 +37,9 @@
 
 
     <footer class="footerButtons">
-        <input type="button" class="button-18" value="Generovat zkratky">
-        <input type="button" class="button-18" value="Zamíchat otázky">
-        <input type="button" class="button-18" value="Stáhnout otázky">
+        <input type="button" class="button-18 generateHints" value="Generovat zkratky">
+        <input type="button" class="button-18 shuffle" value="Zamíchat otázky">
+        <input type="submit" class="button-18 downloadQuestions" value="Stáhnout otázky">
         <input type="submit" class="button-18" value="  Hrát  ">
     </footer>
 </form>
