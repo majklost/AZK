@@ -20,14 +20,10 @@ TFButtonsContainers.forEach((container, i) => {
     if (e.target.type != "button") return;
     console.log(container.children);
     if (e.target.classList[0] == "yes") {
-      container.children[0].classList.add("chosen");
-      container.children[1].classList.remove("chosen");
-      container.dataset.state = "yes";
+      setStateYes(container);
     }
     if (e.target.classList[0] == "no") {
-      container.children[1].classList.add("chosen");
-      container.children[0].classList.remove("chosen");
-      container.dataset.state = "no";
+      setStateNo(container);
     }
   });
 });
@@ -91,7 +87,13 @@ function renderFromData(data) {
     hints[i].value = obj.hint;
   });
   data.TFQuestions.forEach((obj, i) => {
-    textFieldsTF[i].value = obj;
+    textFieldsTF[i].value = obj.question;
+    if (obj.answer == "yes") {
+      setStateYes(TFButtonsContainers[i]);
+    }
+    if (obj.answer == "no") {
+      setStateNo(TFButtonsContainers[i]);
+    }
   });
 }
 function shuffle(array) {
@@ -232,6 +234,16 @@ function generateHints() {
     hints[i].value = hint;
   });
   scroll(0, 0);
+}
+function setStateYes(container) {
+  container.children[0].classList.add("chosen");
+  container.children[1].classList.remove("chosen");
+  container.dataset.state = "yes";
+}
+function setStateNo(container) {
+  container.children[1].classList.add("chosen");
+  container.children[0].classList.remove("chosen");
+  container.dataset.state = "no";
 }
 
 function checkFocus(Elarray, text, isTF = false) {
