@@ -1,13 +1,15 @@
 "use strict";
+const express = require("express");
 const app = require("express")();
 const cors = require("cors");
 const port = 8080;
 const path = require("path");
 const SessionFunctions = require("./sessionFunctions");
-
+const bodyParser = require("body-parser");
 const sessions = {};
 const nowConnected = [];
-
+app.use(express.static(path.join(__dirname, "src")));
+app.use(bodyParser.json());
 app.use(cors());
 //generates 6-digit number which is not in sessions
 function generatePin() {
@@ -15,10 +17,14 @@ function generatePin() {
   if (sessions[pin]) return generatePin();
   else return pin;
 }
+app.post("/post/questions", (req, res) => {
+  const data = req.body;
+  console.log(data);
+  res.redirect("/moderator");
+});
+
 app.get("/", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "/src/createQuestions", "createQuestions.html")
-  );
+  res.sendFile(path.join(__dirname, "src", "createQuestions.html"));
 });
 
 app.get("/moderator", (req, res) => {

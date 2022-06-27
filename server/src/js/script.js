@@ -10,10 +10,32 @@ const shortcut = document.querySelector(".shortcut");
 const upload = document.querySelector("#selectedFile");
 
 //buttons
+const play = document.querySelector(".play");
 const generateHintsBTN = document.querySelectorAll(".generateHints");
 const downloadQuestionsBTN = document.querySelector(".downloadQuestions");
 const shuffleBTN = document.querySelector(".shuffle");
 const TFButtonsContainers = document.querySelectorAll(".TFButtons");
+const cleanButtons = document.querySelectorAll(".cleaner");
+
+play.addEventListener("click", async (e) => {
+  e.preventDefault();
+  const data = generateData();
+  const encoded = JSON.stringify(data);
+  const res = await fetch("/post/questions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: encoded,
+  });
+  if (res.status == 200) window.location.href = `${res.url}`;
+});
+
+cleanButtons.forEach((btn, index) => {
+  btn.addEventListener("click", () => {
+    textFieldsA[index].value = "";
+    textFieldsQ[index].value = "";
+    hints[index].value = "";
+  });
+});
 
 TFButtonsContainers.forEach((container, i) => {
   container.addEventListener("click", (e) => {
