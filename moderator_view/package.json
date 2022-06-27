@@ -9,12 +9,12 @@
     },
     "mixed":{
       "source": "moderator.html",
-      "distDir": "../server/src/moderator"
+      "distDir": "D:/WEBY/AzKvizPhaser/AZK/AZK/server/src/moderator"
     }
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel build --target mixed && parcel watch moderator.html",
+    "build": "parcel build --target mixed",
     "start": "parcel moderator.html"
   },
   "repository": {

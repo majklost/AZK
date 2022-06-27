@@ -34,13 +34,23 @@ export class Network {
 
   async getNewPin() {
     try {
-      const response = await fetch("http://localhost:8080/moderator");
-      console.log(response);
+      // const { pin } = await response.json();
+      const query = window.location.search.substring(1);
+      const urlParams = new URLSearchParams(query);
+      const pin = urlParams.get("pin");
 
-      const { pin } = await response.json();
       localStorage.removeItem("pin");
       localStorage.setItem("pin", pin);
       this.pin = pin;
+      const response = await fetch(
+        `http://localhost:8080/moderator-check-active?pin=${pin}`
+      );
+      const active = await response.json();
+      console.log(active["session"]);
+
+      if (!active["session"]) window.location.replace("http://localhost:8080");
+
+      await this.getQuestions(pin);
     } catch (err) {
       console.error("Unable to get Pin", err);
     }
@@ -62,23 +72,29 @@ export class Network {
     }
   }
 
-  async getQuestions() {
-    try {
-      const response = await fetch(API, { mode: "cors" });
-      const { results } = await response.json();
+  async getQuestions(pin) {
+    if (pin) {
+      const response = await fetch(
+        `http://localhost:8080/get-questions/?pin=${pin}`
+      );
+      console.log(response);
 
-      results.forEach((result) => {
-        const QASet = {
-          question: atob(result.question),
-          answer: atob(result.correct_answer),
-        };
-        this.questions.push(QASet);
-      });
-      //TODO: solve errors and display them to user
-    } catch (err) {
-      console.error(err);
-      this.getQuestions();
+      const result = await response.json();
+      console.log(result);
+
+      this.questions = result.questions.normalQuestions;
+      this.TFQuestions = result.questions.TFQuestions;
     }
+    // results.forEach((result) => {
+    //   const QASet = {
+    //     question: atob(result.question),
+    //     answer: atob(result.correct_answer),
+    //   };
+    //   this.questions.push(QASet);
+    // });
+
+    //TODO: solve errors and display them to user
+    // console.error(err);
   }
   async getTFQuestions() {
     for (let i = 0; i < 28; i++) {

@@ -33,9 +33,8 @@ export class Board {
     traverseModelBoard(this.boardModel, (tile) => {
       tile.init(this.ctx, this.boardHandler.bind(this));
     });
-    this.network.getQuestions();
-    this.network.getTFQuestions();
     this.network.getPin();
+    console.log("PIN GAINED");
 
     traverseModelBoard(this.boardModel, this.setBorder);
   }
@@ -66,6 +65,8 @@ export class Board {
       ? this.network.questions[tile.number - 1]
       : this.network.TFQuestions[tile.number - 1];
 
+    console.log(actualQuestion);
+
     const generateInicials = function (words) {
       let InicialString = "";
       const wordArray = words.split(" ");
@@ -80,7 +81,9 @@ export class Board {
       this.network.pin,
       this.chosenTile.number,
       this.chosenTile.pyramidCoords,
-      generateInicials(actualQuestion.answer)
+      actualQuestion.hint
+        ? actualQuestion.hint
+        : this.chosenTile.number.toString()
     );
 
     if (actualQuestion) {

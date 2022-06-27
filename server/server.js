@@ -27,24 +27,6 @@ function generatePin() {
 app.post("/post/questions", (req, res) => {
   const data = req.body;
   console.log(data);
-  res.redirect("/moderator");
-});
-
-app.get("/", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "src", "generator", "createQuestions.html")
-  );
-});
-app.get("/play", (req, res) => {
-  res.sendFile(path.join(__dirname, "src", "moderator", "moderator.html"));
-});
-
-app.get("/watch", (req, res) => {
-  res.sendFile(path.join(__dirname, "src", "player", "player.html"));
-});
-
-app.get("/moderator", (req, res) => {
-  console.log("SHIT");
   const pin = generatePin();
   sessions[pin] = {
     created: new Date(),
@@ -54,9 +36,40 @@ app.get("/moderator", (req, res) => {
     nextPlayer: undefined,
     numOfSaves: 0,
     ended: false,
+    questions: data,
   };
+  res.redirect(`/play?pin=${pin}`);
+});
 
-  res.json({ pin: pin });
+app.get("/", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "src", "generator", "createQuestions.html")
+  );
+});
+app.get("/play", (req, res) => {
+  console.log(req.query.pin);
+
+  res.sendFile(path.join(__dirname, "src", "moderator", "moderator.html"));
+});
+
+app.get("/watch", (req, res) => {
+  res.sendFile(path.join(__dirname, "src", "player", "player.html"));
+});
+
+app.get("/moderator-check-active", (req, res) => {
+  let pin = req.query.pin;
+  if (sessions[pin]) {
+    res.json({ session: true });
+  } else res.json({ session: false });
+});
+
+app.get("/get-questions", (req, res) => {
+  let pin = req.query.pin;
+  console.log(pin);
+
+  if (sessions[pin]) {
+    res.json({ questions: sessions[pin].questions });
+  } else res.status(404);
 });
 
 app.get("/get-session", (req, res) => {
@@ -65,15 +78,6 @@ app.get("/get-session", (req, res) => {
   else res.json({ pin: false });
 });
 
-// const io = require("socket.io")(3000, {
-//   cors: {
-//     origin: [
-//       "http://localhost:1234",
-//       "http://localhost:64002",
-//       "http//localhost:8080",
-//     ],
-//   },
-// });
 const io = require("socket.io")(server);
 io.on("connection", (socket) => {
   console.log(socket.id);
@@ -129,7 +133,7 @@ io.on("connection", (socket) => {
       sessions[pin].playerID = socket.id;
       io.to(pin.toString()).emit("player-joined");
     } else {
-      console.log(socket.id);
+      console.log(socket.id), "CANNOT CONNECT";
 
       io.to(socket.id).emit("join-room", false);
     }
