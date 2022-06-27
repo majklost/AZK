@@ -26,6 +26,7 @@ export class Network {
       await this.getNewPin();
     }
     eventCenter.emit("gotPin", this.pin);
+    console.log(this.pin);
 
     socket.emit("join-room-moderator", this.pin);
     console.log(this.pin);
@@ -34,6 +35,8 @@ export class Network {
   async getNewPin() {
     try {
       const response = await fetch("http://localhost:8080/moderator");
+      console.log(response);
+
       const { pin } = await response.json();
       localStorage.removeItem("pin");
       localStorage.setItem("pin", pin);

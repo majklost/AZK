@@ -1,16 +1,22 @@
 "use strict";
+const port = 8080;
 const express = require("express");
 const app = require("express")();
+const server = app.listen(port);
 const cors = require("cors");
-const port = 8080;
+
 const path = require("path");
 const SessionFunctions = require("./sessionFunctions");
 const bodyParser = require("body-parser");
+
 const sessions = {};
 const nowConnected = [];
-app.use(express.static(path.join(__dirname, "src")));
-app.use(bodyParser.json());
 app.use(cors());
+
+app.use("/", express.static(path.join(__dirname, "src")));
+
+app.use("/", express.static(path.join(__dirname, "src", "moderator")));
+app.use(bodyParser.json());
 //generates 6-digit number which is not in sessions
 function generatePin() {
   const pin = Math.floor(100000 + Math.random() * 900000);
@@ -20,14 +26,20 @@ function generatePin() {
 app.post("/post/questions", (req, res) => {
   const data = req.body;
   console.log(data);
-  res.redirect("/moderator");
+  // res.redirect("/moderator");
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "src", "createQuestions.html"));
+  res.sendFile(
+    path.join(__dirname, "src", "generator", "createQuestions.html")
+  );
+});
+app.get("/play", (req, res) => {
+  res.sendFile(path.join(__dirname, "src", "moderator", "moderator.html"));
 });
 
 app.get("/moderator", (req, res) => {
+  console.log("SHIT");
   const pin = generatePin();
   sessions[pin] = {
     created: new Date(),
@@ -38,6 +50,7 @@ app.get("/moderator", (req, res) => {
     numOfSaves: 0,
     ended: false,
   };
+
   res.json({ pin: pin });
 });
 
@@ -47,11 +60,16 @@ app.get("/get-session", (req, res) => {
   else res.json({ pin: false });
 });
 
-app.listen(port, () => {});
-
-const io = require("socket.io")(3000, {
-  cors: { origin: ["http://localhost:1234", "http://localhost:64002"] },
-});
+// const io = require("socket.io")(3000, {
+//   cors: {
+//     origin: [
+//       "http://localhost:1234",
+//       "http://localhost:64002",
+//       "http//localhost:8080",
+//     ],
+//   },
+// });
+const io = require("socket.io")(server);
 io.on("connection", (socket) => {
   console.log(socket.id);
   nowConnected.push(socket.id);
@@ -92,10 +110,11 @@ io.on("connection", (socket) => {
     socket.to(room.toString()).emit("win", winner);
   });
   socket.on("join-room-moderator", (pin) => {
-    socket.join(pin.toString());
-    console.log(pin);
-
-    if (sessions[pin]) sessions[pin].moderatorID = socket.id;
+    if (pin) {
+      socket.join(pin.toString());
+      console.log(pin);
+      if (sessions[pin]) sessions[pin].moderatorID = socket.id;
+    }
   });
   socket.on("join-room-player", (pin) => {
     if (sessions[pin]) {

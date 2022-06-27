@@ -24,16 +24,6 @@ const config = {
     mode: Phaser.Scale.FIT,
   },
   resolution: window.devicePixelRatio,
-  plugins: {
-    global: [
-      {
-        key: "rexRoundRectanglePlugin",
-        plugin: RoundRectanglePlugin,
-        start: true,
-      },
-      // ...
-    ],
-  },
   backgroundColor: "#23a4c4",
   scene: [GameScene, NormalQuestion],
 };
