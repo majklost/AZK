@@ -16,6 +16,7 @@ app.use(cors());
 app.use("/", express.static(path.join(__dirname, "src")));
 
 app.use("/", express.static(path.join(__dirname, "src", "moderator")));
+app.use("/", express.static(path.join(__dirname, "src", "player")));
 app.use(bodyParser.json());
 //generates 6-digit number which is not in sessions
 function generatePin() {
@@ -26,7 +27,7 @@ function generatePin() {
 app.post("/post/questions", (req, res) => {
   const data = req.body;
   console.log(data);
-  // res.redirect("/moderator");
+  res.redirect("/moderator");
 });
 
 app.get("/", (req, res) => {
@@ -36,6 +37,10 @@ app.get("/", (req, res) => {
 });
 app.get("/play", (req, res) => {
   res.sendFile(path.join(__dirname, "src", "moderator", "moderator.html"));
+});
+
+app.get("/watch", (req, res) => {
+  res.sendFile(path.join(__dirname, "src", "player", "player.html"));
 });
 
 app.get("/moderator", (req, res) => {

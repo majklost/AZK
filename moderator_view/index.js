@@ -19,6 +19,15 @@ const config = {
     default: "arcade",
     arcade: {},
   },
+  plugins: {
+    global: [
+      {
+        key: "rexRoundRectanglePlugin",
+        plugin: RoundRectanglePlugin,
+        start: true,
+      },
+    ],
+  },
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH,
     mode: Phaser.Scale.FIT,
