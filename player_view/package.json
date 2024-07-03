@@ -1,0 +1,25 @@
+{
+  "name": "player_view",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "targets":{
+    "mixed":{
+      "source": "player.html",
+      "distDir": "../server/src/player"
+    }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build --target mixed"
+  },
+  "author": "Michal Mrkos",
+  "license": "ISC",
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "parcel": "^2.6.0"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.5.1"
+  }
+}

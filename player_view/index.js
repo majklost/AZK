@@ -1,32 +1,24 @@
 "use strict";
-// import { io } from "socket.io-client";
+
 //Neměnit rozměry textur! potřeba uupravit i v board template
-import RoundRectanglePlugin from "phaser3-rex-plugins/plugins/roundrectangle-plugin.js";
-import { xRes, yRes } from "./myconfig.js";
-import { NormalQuestion } from "./js/normalQuestion.js";
+
 import { GameScene } from "./js/gameScene.js";
 
 //Determine resolution of window
-
+const WIDTH = 1920;
+const HEIGHT = 1080;
 //Settings of Phaser
 
 const config = {
   type: Phaser.AUTO,
-  width: xRes,
-  height: yRes,
-
+  width: WIDTH,
+  height: HEIGHT,
+  dom: {
+    createContainer: true,
+  },
   physics: {
     default: "arcade",
     arcade: {},
-  },
-  plugins: {
-    global: [
-      {
-        key: "rexRoundRectanglePlugin",
-        plugin: RoundRectanglePlugin,
-        start: true,
-      },
-    ],
   },
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -34,7 +26,7 @@ const config = {
   },
   resolution: window.devicePixelRatio,
   backgroundColor: "#23a4c4",
-  scene: [GameScene, NormalQuestion],
+  scene: [GameScene],
 };
 
 //init of Phaser

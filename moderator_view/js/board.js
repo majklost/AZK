@@ -1,6 +1,7 @@
+import { socket } from "./socket.js";
 import { Tile } from "./tile.js";
 import eventCenter from "./eventCenter.js";
-import { QuestionGenerator } from "./questionGenerator.js";
+import { Network } from "./network.js";
 
 //Main class of game, takes care of loading questions, displaying tiles and checking winner
 export class Board {
@@ -12,7 +13,18 @@ export class Board {
     //Current player, who starts
     this.player = "B";
     //Object which gives questions to game
-    this.questionGenerator = new QuestionGenerator();
+    this.network = new Network();
+    eventCenter.on("restoreSession", (hideOverlay) => {
+      traverseModelBoard(this.boardModel, (tile, rowIndex, i) => {
+        tile.tileState = this.network.backup.boardModel[rowIndex][i];
+        tile.setState();
+      });
+      this.player = this.network.backup.nextPlayer;
+      hideOverlay();
+    });
+    eventCenter.on("timerStart", () => {
+      socket.emit("timerStart", this.network.pin);
+    });
   }
   //initialize each tile (set their sprites), gets questions from API
   init(ctx) {
@@ -21,8 +33,9 @@ export class Board {
     traverseModelBoard(this.boardModel, (tile) => {
       tile.init(this.ctx, this.boardHandler.bind(this));
     });
-    this.questionGenerator.getQuestions();
-    this.questionGenerator.getTFQuestions();
+    this.network.getPin();
+    console.log("PIN GAINED");
+
     traverseModelBoard(this.boardModel, this.setBorder);
   }
 
@@ -45,11 +58,33 @@ export class Board {
   //When clicked on Tile, this function is called
   boardHandler(tile) {
     this.chosenTile = tile;
+    console.log(this.chosenTile);
 
     //Creates event with data to send to QuestionScene
     const actualQuestion = !this.chosenTile.tileState
-      ? this.questionGenerator.questions[tile.number - 1]
-      : this.questionGenerator.TFQuestions[tile.number - 1];
+      ? this.network.questions[tile.number - 1]
+      : this.network.TFQuestions[tile.number - 1];
+
+    console.log(actualQuestion);
+
+    const generateInicials = function (words) {
+      let InicialString = "";
+      const wordArray = words.split(" ");
+      wordArray.forEach((word) => {
+        InicialString += word[0];
+      });
+      return InicialString;
+    };
+
+    socket.emit(
+      "QuestionPick",
+      this.network.pin,
+      this.chosenTile.number,
+      this.chosenTile.pyramidCoords,
+      actualQuestion.hint
+        ? actualQuestion.hint
+        : this.chosenTile.number.toString()
+    );
 
     if (actualQuestion) {
       this.ctx.scene.switch("NormalQuestion");
@@ -65,31 +100,47 @@ export class Board {
     }
   }
   switchPlayer() {
+    console.log("SWITCHED");
     if (this.player == "B") this.player = "O";
     else if (this.player == "O") this.player = "B";
+
+    socket.emit("playerSwitch", this.network.pin, this.player);
 
     eventCenter.emit("playerSwitch", this.player);
   }
   questionAnsweredRight(bool, TF = false) {
+    let state;
     //Answered correctly
-    if (bool) this.chosenTile.setState(this.player);
+    if (bool) state = this.player;
     //Answered incorrectly and it is not True False question
-    else if (!TF) this.chosenTile.setState("G");
+    else if (!TF) state = "G";
     //Answered incorrectly and it is True False question
     else {
       this.switchPlayer();
-      this.chosenTile.setState(this.player);
+      state = this.player;
     }
+    socket.emit(
+      "tileResolved",
+      this.network.pin,
+      state,
+      this.chosenTile.pyramidCoords,
+      this.player,
+      this.network.pin
+    );
+
+    this.chosenTile.setState(state);
     this.checkWin();
     this.switchPlayer();
   }
   checkWin() {
+    //if all sides true -> winner
     const connectedToSide = {
       right: false,
       left: false,
       bottom: false,
     };
     const connectedNeighbours = [];
+    // Hexagon relative indexes of neighbours in array
     const relativeIndexes = [
       [-1, -1],
       [0, -1],
@@ -98,8 +149,6 @@ export class Board {
       [0, 1],
       [1, 1],
     ];
-    // console.log(this.chosenTile);
-    // console.log(this.boardModel);
     function checkNeighbours(tile) {
       relativeIndexes.forEach((relXY) => {
         const x = tile.pyramidCoords.x + relXY[0];

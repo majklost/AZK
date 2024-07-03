@@ -1,4 +1,3 @@
-import Phaser from "phaser";
 import eventCenter from "./eventCenter";
 import { xRes, yRes } from "../myconfig";
 import { Timer } from "./timer";
@@ -129,6 +128,7 @@ export class NormalQuestion extends Phaser.Scene {
       sprite.setDepth(-1);
       return sprite;
     }
+
     const actualPlayer = this.data.get("BoardData").actualPlayer;
     if (actualPlayer == "B")
       this.switch = renderSwitch.call(this, "switchToOrange");

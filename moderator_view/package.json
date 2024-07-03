@@ -2,10 +2,20 @@
   "name": "azk",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "targets":{
+    "seperate":{
+      "source": "moderator.html",
+      "distDir": "./dist"
+    },
+    "mixed":{
+      "source": "moderator.html",
+      "distDir": "D:/WEBY/AzKvizPhaser/AZK/AZK/server/src/moderator"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel index.html"
+    "build": "parcel build --target mixed",
+    "start": "parcel moderator.html"
   },
   "repository": {
     "type": "git",
@@ -18,10 +28,11 @@
   },
   "homepage": "https://github.com/majklost/AZK#readme",
   "dependencies": {
-    "phaser": "^3.55.2",
-    "phaser3-rex-plugins": "^1.1.70"
+    "phaser3-rex-plugins": "^1.1.70",
+    "socket.io-client": "^4.5.1"
   },
   "devDependencies": {
+    "buffer": "^6.0.3",
     "parcel": "^2.5.0"
   }
 }
